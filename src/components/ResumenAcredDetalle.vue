@@ -33,6 +33,15 @@ const getVto = (vto) => {
   return null
 }
 
+
+const getPeriodo= (per) => {
+  if(per){
+    const p=per.split('-')
+    return`${p[0]}_${p[1]}`
+  }
+  return null
+}
+
 const headers = [
 
 {
@@ -149,8 +158,7 @@ function exportFile() {
       x.HABERES,
       x.RETENCIONES,
       x.NETO,
-      x.IMPORTE,
-      x.CANTIDAD,
+      x.UNIORG,
       x.BLOQ,
       x.ESLEY,
       
@@ -183,13 +191,13 @@ function exportFile() {
   const ws = utils.aoa_to_sheet(map1)
 
   ws['!cols'] = [
+    { wch: 10 },
+    { wch: 10 },
+    { wch: 10 },
     { wch: 15 },
+    { wch: 10 },
     { wch: 15 },
-    { wch: 10 },
-    { wch: 10 },
-    { wch: 10 },
-    { wch: 10 },
-    { wch: 10 },
+    { wch: 20 },
     { wch: 10 },
     { wch: 10 },
     { wch: 10 },
@@ -208,7 +216,7 @@ function exportFile() {
   utils.book_append_sheet(wb, ws, 'Data')
 
   /* export to XLSX */
-  writeFileXLSX(wb, `${store.liqCompactString}_Detalle_Acreditaciones.xlsx`, {
+  writeFileXLSX(wb, `Detalle_Acreditaciones_${getPeriodo(store.periodoString)}.xlsx`, {
     compression: true
   })
 }
@@ -240,9 +248,9 @@ function exportFile() {
             <td class="text-right">{{ item.LIQUIDACIONID}}</td>
             <td class="text-left">{{ item.DOCUMENTO}}</td>
             <td class="text-left">{{ item.APELLIDO}}</td>
-            <td class="text-right">{{ item.NOMBRE }}</td>
-            <td class="text-left">{{ item.REPARTICIONID}}</td>
-            <td class="text-left">{{ item.ORDEN}}</td>
+            <td class="text-left">{{ item.NOMBRE }}</td>
+            <td class="text-right">{{ item.REPARTICIONID}}</td>
+            <td class="text-right">{{ item.ORDEN}}</td>
             <td class="text-right">{{ item.AFILIADO}}</td>
             <td class="text-left">{{ item.CUIL}}</td>            
             <td class="text-left">{{ item.CBU}}</td>
