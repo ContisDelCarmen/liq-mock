@@ -35,14 +35,14 @@ async function grabaRegistro() {
     REPARTICIONID: -1,
     PERIODOLIQ: getFechaToAPIFromMMYYYY(periodoLiq.value)
   }
-
+  console.log('ANTES DE GRABAR:')
   console.log(registroGrabar)
-  let grabarOk = await props.funcion(registroGrabar, null)
-
-  if (grabarOk) {
+  let resultadoGrabacion = await props.funcion(registroGrabar, null)
+  console.log('Resultado Grabacion: ' + resultadoGrabacion)
+  if (resultadoGrabacion == 'OK') {
     props.cerrar()
   } else {
-    mensajeError.value = 'No se pudieron grabar los datos'
+    mensajeError.value = resultadoGrabacion
     mostrarAlert.value = true
   }
 }

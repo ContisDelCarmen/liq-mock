@@ -4,7 +4,7 @@ import Confirmacion from '../utils/Confirmacion.vue'
 import { leerDatos, ejecutarSP } from './llamadaAPI'
 import botonTooltip from '../utils/botonTooltip.vue'
 import { getVto } from '@/utils/formatos'
-import { getPeriodoFromMMYYYY } from '@/utils/formatos.js'
+import { getPeriodoFromMMYYYY, getFechaToAPIFromMMYYYY } from '@/utils/formatos.js'
 import LiqDDJJAgrega from './LiqDDJJAgrega.vue'
 
 const props = defineProps(['periodo'])
@@ -33,9 +33,6 @@ async function leerListaRegs() {
   const { datos, operacionOk } = await leerDatos(
     'view/djPrevLiqsPeriodoDJ?PeriodoDJ=' + periodoActivo
   )
-  console.log('datos recibidos', datos)
-  console.log('operacion ok', operacionOk)
-
   data.value = datos
   lecturaListaRegs.value = operacionOk
   isPending.value = false
@@ -58,40 +55,42 @@ async function grabarSP(item) {
   url = 'sp/djPrevIncluyeLiqs'
 
   const { valorError, valorSalida } = await ejecutarSP(url, item)
-  if (valorError == 0) {
+  if (valorSalida == 0) {
     await leerListaRegs()
-    alertMensaje.value = 'Se grabó la novedad Nº ' + valorSalida
+    alertMensaje.value = 'Se agregó la liquidación'
     alertTipo.value = 'success'
     mostrarAlert.value = true
-    return true
+    return 'OK'
   }
 
-  return false
+  return valorError
 }
 
 const muestraConfirmacion = ref(false)
 
-async function eliminar(id) {
+async function eliminar(item) {
   muestraConfirmacion.value = false
-  let item = {
-    vIDNOV: id
-  }
-  let url = 'sp/djExcluyeLiqs'
+  let url = 'sp/djPrevExcluyeLiqs'
 
-  const { valorError } = await ejecutarSP(url, item)
-  if (valorError == 0) {
+  const { valorError, valorSalida } = await ejecutarSP(url, item)
+
+  if (valorSalida == 0) {
     await leerListaRegs()
-    alertMensaje.value = 'Se eliminó la novedad Nº' + id
+    alertMensaje.value = 'Se excluyó la liquidación'
     alertTipo.value = 'success'
     mostrarAlert.value = true
     return true
+  } else {
+    alertMensaje.value = valorError
+    alertTipo.value = 'error'
+    mostrarAlert.value = true
   }
   return false
 }
 
 leerListaRegs()
 
-const itemEliminar = ref(0)
+const itemEliminar = ref({})
 function handleEliminar(itemid) {
   mostrarAlert.value = false
   itemEliminar.value = itemid
@@ -113,20 +112,21 @@ function cierraConfirmacion() {
       >
     </v-row>
     <v-row>
+      <v-alert
+        v-model="mostrarAlert"
+        border="start"
+        close-label="Close Alert"
+        :color="alertTipo"
+        :icon="'$' + alertTipo"
+        closable
+      >
+        {{ alertMensaje }}
+      </v-alert>
+    </v-row>
+    <v-row>
       <div v-if="isPending">loading...</div>
       <div v-else-if="!lecturaListaRegs">Sin datos para mostrar</div>
       <div v-else-if="data">
-        <v-alert
-          v-model="mostrarAlert"
-          border="start"
-          close-label="Close Alert"
-          :color="alertTipo"
-          :icon="'$' + alertTipo"
-          closable
-        >
-          {{ alertMensaje }}
-        </v-alert>
-
         <v-data-table
           class="text-caption"
           hover
@@ -141,7 +141,13 @@ function cierraConfirmacion() {
                   :icono="'mdi-delete'"
                   :toolMsg="'Eliminar'"
                   :funcion="handleEliminar"
-                  :itemid="item.ID"
+                  :itemid="{
+                    PERIODODDJJ: getFechaToAPIFromMMYYYY(props.periodo),
+                    TIPOLIQUIDACIONID: item.TIPOLIQUIDACIONID,
+                    GRUPOADICIONALID: item.GRUPOADICIONALID,
+                    REPARTICIONID: -1,
+                    PERIODOLIQ: item.PERIODOLIQ
+                  }"
                 ></botonTooltip>
               </td>
               <td class="text-left m-0 p-0">{{ item.TIPOLIQUIDACIONDESCRIPCION }}</td>
