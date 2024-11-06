@@ -87,10 +87,11 @@ export async function leerDatos(url) {
   try {
     response = await fetch(urlAPI + url)
     estado = response.status
-
+    console.log(response)
     if (response.ok) {
       datos = await response.json()
     }
+    console.log(datos)
     operacionOk = response.ok
     if (response.status == 404) operacionOk = true
   } catch (error) {
@@ -107,7 +108,7 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   let operacionOk = false
   let errmsg = ''
   let valorError = -1
-  let valorSalida = 0
+  let valorSalida = -1
   let errorMsg = ''
   //console.log('dirección: ', urlAPI + url)
   //console.log('datos:', JSON.stringify(data))
@@ -144,4 +145,30 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   }
 
   return { estado, operacionOk, errmsg, valorError, valorSalida, errorMsg }
+}
+
+export async function leerTXT(url) {
+  let estado = 0
+  let operacionOk = false
+  let errmsg = ''
+  let datos = null
+  console.log(urlAPI + url)
+  let response = null
+  try {
+    response = await fetch(urlAPI + url)
+    estado = response.status
+    console.log(response)
+    if (response.ok) {
+      datos = await response.
+    }
+    console.log(datos)
+    operacionOk = response.ok
+    if (response.status == 404) operacionOk = true
+  } catch (error) {
+    estado = 999
+    operacionOk = false
+    errmsg = 'Error en la Red'
+    datos = null
+  }
+  return { estado, operacionOk, errmsg, datos }
 }
