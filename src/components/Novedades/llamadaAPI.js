@@ -6,7 +6,8 @@ const { apiBase } = useEndPoints()
 
 // const urlAPI = 'http://www.serverburru2.duckdns.org:3005/api/'
 
-const urlAPI = apiBase.value + '/api/';
+const urlAPI = apiBase.value + '/api/'
+const urlAPI_sp = 'https://josrferreyr-deno-api-su-79.deno.dev/'
 
 export async function grabarRegistro(url = '', data = {}, metodo = 'POST') {
   let estado = 0
@@ -53,7 +54,7 @@ export async function eliminarRegistro(url = '', metodo = 'DELETE') {
   try {
     const response = await fetch(urlAPI + url, {
       method: metodo, // *GET, POST, PUT, DELETE, etc.
-      mode: 'no-cors', // no-cors, *cors, same-origin
+      mode: 'no-cors' // no-cors, *cors, same-origin
       //cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
       //credentials: 'same-origin' // include, *same-origin, omit
       //headers: {
@@ -114,11 +115,11 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   let errorMsg = ''
 
   try {
-    const response = await fetch(urlAPI + url, {
+    const response = await fetch(urlAPI_sp + url, {
       method: metodo, // *GET, POST, PUT, DELETE, etc.
-      mode: 'no-cors', // no-cors, *cors, same-origin
+      mode: 'cors', // no-cors, *cors, same-origin
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      //credentials: 'same-origin', // include, *same-origin, omit
+      credentials: 'same-origin', // include, *same-origin, omit
       headers: {
         'Content-Type': 'application/json'
         // 'Content-Type': 'application/x-www-form-urlencoded',
@@ -129,8 +130,10 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
     })
     estado = response.status
     operacionOk = response.ok
+    let datos = await response.json()
+    console.log(datos)
     if (response.ok) {
-      let datos = await response.json()
+      //let datos = await response.json()
       valorError = datos.out.ValorError
       valorSalida = datos.out.ValorSalida
       errorMsg = datos.out.vErrorMsg

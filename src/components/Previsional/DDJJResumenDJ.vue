@@ -36,16 +36,6 @@ async function leerListaRegs() {
   }
 }
 
-async function leerTXT() {
-  isPending.value = true
-  const { datos, operacionOk } = await leerDatos(
-    'txt/djPrevTxtDDJJ?PeriodoDJ=' + getPeriodoFromMMYYYY(props.periodo)
-  )
-  console.log(datos)
-
-  lecturaListaRegs.value = operacionOk
-}
-
 async function procesaDDJJ() {
   isPending.value = true
   let url = 'sp/djPrevCargaResumen'

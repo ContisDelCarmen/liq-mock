@@ -3,7 +3,7 @@ import { useEndPoints } from '@/composables/useEndPoints'
 const { apiBase } = useEndPoints()
 
 const urlAPI = 'http://www.serverburru2.duckdns.org:3005/api/'
-
+const urlAPI_sp = 'https://josrferreyr-deno-api-su-79.deno.dev/'
 //const urlAPI = apiBase.value + '/api/'
 
 export async function grabarRegistro(url = '', data = {}, metodo = 'POST') {
@@ -114,7 +114,7 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   //console.log('datos:', JSON.stringify(data))
 
   try {
-    const response = await fetch(urlAPI + url, {
+    const response = await fetch(urlAPI_sp + url, {
       method: metodo, // *GET, POST, PUT, DELETE, etc.
       mode: 'cors', // no-cors, *cors, same-origin
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -145,30 +145,4 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   }
 
   return { estado, operacionOk, errmsg, valorError, valorSalida, errorMsg }
-}
-
-export async function leerTXT(url) {
-  let estado = 0
-  let operacionOk = false
-  let errmsg = ''
-  let datos = null
-  console.log(urlAPI + url)
-  let response = null
-  try {
-    response = await fetch(urlAPI + url)
-    estado = response.status
-    console.log(response)
-    if (response.ok) {
-      datos = await response.
-    }
-    console.log(datos)
-    operacionOk = response.ok
-    if (response.status == 404) operacionOk = true
-  } catch (error) {
-    estado = 999
-    operacionOk = false
-    errmsg = 'Error en la Red'
-    datos = null
-  }
-  return { estado, operacionOk, errmsg, datos }
 }

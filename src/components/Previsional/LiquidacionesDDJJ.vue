@@ -81,7 +81,7 @@ async function eliminar(item) {
     mostrarAlert.value = true
     return true
   } else {
-    alertMensaje.value = valorError
+    alertMensaje.value = 'No se pudo eliminar la liquidación'
     alertTipo.value = 'error'
     mostrarAlert.value = true
   }
