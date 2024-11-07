@@ -47,6 +47,12 @@ export const getPeriodoFromMMYYYY = (periodo) => {
 
 export const getFechaToAPIFromMMYYYY = (periodo) => {
   const d = periodo.split('/')
-  let fecha = d[1] + '-' + d[0] + '-01'
+  let fecha = d[1] + '-' + d[0] + '-01' + 'T03:00:00.000Z'
+  return fecha
+}
+
+export const getFechaToAPIFromDDMMYYYY = (fechaOrigen) => {
+  const d = fechaOrigen.split('/')
+  let fecha = d[2] + '-' + d[1] + '-' + d[0] + 'T03:00:00.000Z'
   return fecha
 }
