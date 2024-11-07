@@ -4,7 +4,7 @@ import { useEndPoints } from '@/composables/useEndPoints'
 
 const { apiBase } = useEndPoints()
 
-// const urlAPI = 'http://www.serverburru2.duckdns.org:3005/api/'
+const urlAPI = 'http://www.serverburru2.duckdns.org:3005/api/'
 
 const urlAPI = apiBase.value + '/api/'
 const urlAPI_sp = 'https://josrferreyr-deno-api-su-79.deno.dev/'
@@ -14,7 +14,6 @@ export async function grabarRegistro(url = '', data = {}, metodo = 'POST') {
   let operacionOk = false
   let errmsg = ''
   let datos = null
-
   try {
     const response = await fetch(urlAPI + url, {
       method: metodo, // *GET, POST, PUT, DELETE, etc.
@@ -113,6 +112,8 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   let valorError = -1
   let valorSalida = 0
   let errorMsg = ''
+  //console.log('dirección: ', urlAPI + url)
+  //console.log('datos:', JSON.stringify(data))
 
   try {
     const response = await fetch(urlAPI_sp + url, {
@@ -141,6 +142,7 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
       errmsg = 'Error al intentar grabar el registro'
     }
   } catch (error) {
+    console.log('se produjo un error')
     estado = 999
     operacionOk = false
     errmsg = 'Error en la Red'

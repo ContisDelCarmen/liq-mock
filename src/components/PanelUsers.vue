@@ -1,13 +1,12 @@
 <script setup>
 import { onBeforeMount, onMounted, ref, toRefs } from 'vue'
-import { usersStore } from '@/stores/usersStore.js'
+import { useUserStore } from '@/stores/userStore'
 
-const store = usersStore()
+const store = useUserStore()
 
-const { users, error, isPending } = toRefs(store)
+const { users, error, loading } = toRefs(store)
 
 const props = defineProps(['title', 'subtitle'])
-const emit = defineEmits(['select'])
 
 const search = ref()
 
@@ -66,7 +65,7 @@ async function handleConfirm() {
   dialog.value = false
   overlay.value = true
   if (currentOption.value === 3){
-    await store.changePassword(currentItem.value.ID, currentItem.value.DNI)
+    await store.changeUserPassword(currentItem.value.ID, currentItem.value.DNI)
   }else{
     await store.setEstado(currentItem.value.ID, currentOption.value)
   }
@@ -89,7 +88,7 @@ onMounted(() => {
 
 <template>
   <v-container>
-    <div v-if="isPending">loading...</div>
+    <div v-if="loading">loading...</div>
     <v-card flat v-else-if="users">
       <v-card-title class="d-flex align-center pe-2 bg-blue-accent-1">
         {{ props.title }}
@@ -158,7 +157,7 @@ onMounted(() => {
   </v-container>
 
   <v-overlay :model-value="overlay" persistent class="align-center justify-center">
-        <v-progress-circular color="primary" size="64" indeterminate :active="isPending"></v-progress-circular>
+        <v-progress-circular color="primary" size="64" indeterminate :active="loading"></v-progress-circular>
     </v-overlay>
 
 </template>

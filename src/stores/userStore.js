@@ -13,7 +13,8 @@ export const useUserStore = defineStore('userStore', {
         success: false,
         auth: false,
         allowSign: false,
-        rol: null
+        rol: null,
+        users: []
     }),
     getters: {
         isRegistred: (state) => !!state.user,
@@ -26,6 +27,57 @@ export const useUserStore = defineStore('userStore', {
         },
     },
     actions: {
+        getConfig() {
+            this.isPending = true
+            fetch(`${apiBoletas.value}/config`)
+              .then((res) => res.json())
+              .then((_data) => {
+                console.log(_data)
+                this.config = _data[0]
+              })
+              .catch((err) => {
+                console.log(err)
+                this.error = err
+              })
+              .finally(() => (this.isPending = false))
+          },
+        getUsers() {
+            this.loading = true
+            fetch(`${apiBoletas.value}/users`)
+              .then((res) => res.json())
+              .then((_data) => {
+                this.users = _data
+              })
+              .catch((err) => {
+                console.log(err)
+                this.error = err
+              })
+              .finally(() => (this.loading = false))
+        },
+        async setEstado(idus, estado) {
+            this.isPending = true
+            this.error = null
+            try {
+              const bodyIn = {
+                IdUsuario: idus,
+                Estado: estado
+              }
+              const requestOptions = {
+                method: `POST`, // POST, etc
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyIn)
+              }
+              const res = await fetch(`${apiBoletas.value}/estadoUsuario`, requestOptions)
+              console.log(res)
+              this.result = res
+            } catch (err) {
+              this.error = err
+              console.log(err)
+            } finally {
+              this.isPending = false
+            }
+          },
         async login(dni, pass) {
             await this.fetchUser(dni)
             if (this.user) {
@@ -33,11 +85,14 @@ export const useUserStore = defineStore('userStore', {
             }
         },
         async loginUserName(userName, pass) {
+            this.auth = false
             await this.fetchUserName(userName)
             if (this.user) {
                 if (atob(this.user?.PASSWORD) === pass) {
                     this.auth = true
                     //await this.fetchRol()
+                }else{
+                    this.auth = false
                 }
             }
         },
@@ -234,6 +289,31 @@ export const useUserStore = defineStore('userStore', {
             try {
                 const bodyIn = {
                     'IdUsuario': this.user.ID,
+                    'Clave': btoa(newPass)
+                }
+                const requestOptions = {
+                    method: `POST`, // POST, etc
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyIn)
+                }
+                await fetch(`${apiBoletas.value}/claveUsuario`, requestOptions)
+                this.result = 'ok'
+            } catch (err) {
+                this.error = err
+                console.log(err)
+            } finally {
+                this.loading = false
+            }
+        },
+        async changeUserPassword(idus, newPass) {
+            this.loading = true
+            this.error = null
+
+            console.log(idus, newPass)
+            try {
+                const bodyIn = {
+                    'IdUsuario': idus,
                     'Clave': btoa(newPass)
                 }
                 const requestOptions = {
