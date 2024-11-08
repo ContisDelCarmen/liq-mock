@@ -42,8 +42,9 @@ const registroVacio = ref({
 })
 
 if (registroOrigen) {
+  console.log(registroOrigen.APJUB)
   registroActual.value = { ...registroOrigen }
-  registroActual.value.AJUB = registroOrigen.AJUB == 1
+  registroActual.value.AJUB = registroOrigen.APJUB == 1
   vencimiento.value = getVto(registroOrigen.VTO)
   periodo.value = getVto(registroOrigen.PERIODO)
   sexoSelected.value = getObjetList(sexos, registroOrigen.SEXO)
@@ -100,8 +101,6 @@ async function grabaRegistro() {
       vIDHOJANOV: hojaId
     }
   }
-  console.log('Registro a grabar......')
-  console.log(registroGrabar)
   let grabarOk = await props.funcion(registroGrabar, registroActual.value.ID)
 
   if (grabarOk) {
@@ -134,7 +133,7 @@ function validarRegistro() {
           {{ mensajeError }}
         </v-alert>
         <v-card-text>
-          <v-container style="height: 70vh; overflow-y: scroll">
+          <v-container style="height: 60vh; overflow-y: scroll">
             <v-row>
               <v-col cols="4">
                 <v-text-field
@@ -287,7 +286,6 @@ function validarRegistro() {
                   v-model="registroActual.AJUB"
                   color="primary"
                   label="Ap. Jub"
-                  value="primary"
                   hide-details
                 ></v-checkbox>
               </v-col>

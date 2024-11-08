@@ -115,7 +115,7 @@ async function grabaRegistro() {
         <v-container>
           <v-row>
             <v-col cols="2">
-              <v-text-field
+              <v-text-field v-if="hojaActual.ID != 0"
                 v-model="hojaActual.ID"
                 hide-details="auto"
                 label="Id"
@@ -187,12 +187,13 @@ async function grabaRegistro() {
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row v-if="hojaActual.ID != 0">
             <v-col cols="4">
               <v-text-field
                 v-model="fechaCreacionFormat"
                 hide-details="auto"
                 label="Fecha Creación"
+                readonly=""
               ></v-text-field>
             </v-col>
             <v-col v-if="hojaActual.ID !== 0" cols="4">

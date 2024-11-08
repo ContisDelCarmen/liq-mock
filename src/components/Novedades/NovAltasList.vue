@@ -9,7 +9,7 @@ import { utils, writeFileXLSX } from 'xlsx'
 import { agregaTitulosExcel } from '@/utils/reportes.js'
 
 const props = defineProps(['setHojaEdicion', 'hojaEditar'])
-
+// prueba de commir en github
 const hojaEditar = props.hojaEditar
 
 // cerrar editar registros de Hoja
@@ -34,7 +34,12 @@ const listaHeaders = [
   { title: 'Vto.', key: 'VTO' },
   { title: 'Titulo', key: 'TITULO' },
   { title: 'Dif. Cat.', key: 'DIFCAT' },
+<<<<<<< HEAD
   { title: 'Ap. Jub.', key: 'AJUB' },
+=======
+  { title: 'Ap. Jub.', key: 'APJUB' },
+  { title: 'Periodo', key: 'PERIODO' },
+>>>>>>> 58751b412018936b918019d903cbc4c663074a6b
   { title: 'Fecha Grab.', key: 'FECHAGRABACION' },
   { title: 'Estado Reg.', key: 'ESTADOREGISTRO' }
 ]
@@ -71,7 +76,6 @@ const itemMostrar = ref({
 function handleModif(itemid) {
   mostrarAlert.value = false
   let item = null
-  console.log(itemid)
   if (itemid != null) if (itemid !== 0) item = data.value.find((e) => e.ID == itemid)
   abrirModal(item)
 }
@@ -103,13 +107,11 @@ function cierraForm() {
 // funciones de agregado, modificación y eliminación
 async function grabarSP(item, id) {
   let url = ''
-  console.log(item)
   if (id == 0) {
     url = 'sp/NovAltasIns'
   } else {
     url = 'sp/NovAltasUpd'
   }
-  //console.log(url, item)
 
   const { valorError, valorSalida } = await ejecutarSP(url, item)
   if (valorError == 0) {
