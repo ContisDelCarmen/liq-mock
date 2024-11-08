@@ -70,6 +70,10 @@ async function grabaRegistro() {
     mostrarAlert.value = true
     return
   }
+  let vto = ''
+  if (vencimiento.value != null) {
+    if (vencimiento.value.length > 0) vto = getFechaToAPIFromMMYYYY(vencimiento.value)
+  }
 
   let registroGrabar = {
     vREP: registroActual.value.IDREP,
@@ -84,7 +88,7 @@ async function grabaRegistro() {
     vCC: registroActual.value.CC,
     vCAT: registroActual.value.CAT,
     vANTIG: registroActual.value.ANTIG,
-    vVTO: getFechaToAPIFromMMYYYY(vencimiento.value),
+    vVTO: vto,
     vTITULO: registroActual.value.TITULO,
     vDIF_CAT: registroActual.value.DIFCAT,
     vAJUB: registroActual.value.AJUB ? 1 : 0,
@@ -101,6 +105,7 @@ async function grabaRegistro() {
       vIDHOJANOV: hojaId
     }
   }
+  console.log(registroGrabar)
   let grabarOk = await props.funcion(registroGrabar, registroActual.value.ID)
 
   if (grabarOk) {
