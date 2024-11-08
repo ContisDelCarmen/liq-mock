@@ -7,6 +7,7 @@ import { getVto, getFechaDMY } from '@/utils/formatos'
 import NovAltasVista from './NovAltasVista.vue'
 import { utils, writeFileXLSX } from 'xlsx'
 import { agregaTitulosExcel } from '@/utils/reportes.js'
+import { getName, estadosNov } from '@/utils/tipos'
 
 const props = defineProps(['setHojaEdicion', 'hojaEditar'])
 // prueba de commir en github
@@ -312,7 +313,7 @@ function exportFile() {
             <td class="text-right m-0 p-0">{{ item.DIFCAT }}</td>
             <td class="text-center m-0 p-0">{{ item.AJUB ? 'SI' : 'NO' }}</td>
             <td class="text-center m-0 p-0">{{ getFechaDMY(item.FECHAGRABACION) }}</td>
-            <td class="text-center m-0 p-0">{{ item.ESTADOREGISTRO }}</td>
+            <td class="text-center m-0 p-0">{{ getName(estadosNov, item.ESTADOREGISTRO) }}</td>
           </tr>
         </template>
       </v-data-table>

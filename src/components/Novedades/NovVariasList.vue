@@ -8,6 +8,7 @@ import NovVariasVista from './NovVariasVista.vue'
 import { utils, writeFileXLSX } from 'xlsx'
 import { agregaTitulosExcel } from '@/utils/reportes.js'
 import { computed } from 'vue'
+import { getName, estadosNov } from '@/utils/tipos'
 
 const props = defineProps(['setHojaEdicion', 'hojaEditar'])
 
@@ -288,7 +289,7 @@ function exportFile() {
             <td class="text-center m-0 p-0">{{ getVto(item.VENCIMIENTO) }}</td>
             <td class="text-center m-0 p-0">{{ financial(item.IMPORTE) }}</td>
             <td class="text-center m-0 p-0">{{ getFechaDMY(item.FECHAGRABACION) }}</td>
-            <td class="text-center m-0 p-0">{{ item.ESTADOREGISTRO }}</td>
+            <td class="text-center m-0 p-0">{{ getName(estadosNov, item.ESTADOREGISTRO) }}</td>
           </tr>
         </template>
       </v-data-table>

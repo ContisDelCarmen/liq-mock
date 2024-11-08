@@ -184,16 +184,6 @@ function validarRegistro() {
                 ></v-text-field>
               </v-col>
             </v-row>
-
-            <v-row>
-              <v-col cols="3" v-if="registroActual.ID != 0">
-                <v-text-field
-                  v-model="registroActual.ESTADOREGISTRO"
-                  hide-details="auto"
-                  label="Estado"
-                ></v-text-field>
-              </v-col>
-            </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions class="d-flex justify-end">
