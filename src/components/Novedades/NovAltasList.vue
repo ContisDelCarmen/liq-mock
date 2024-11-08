@@ -7,6 +7,7 @@ import { getVto, getFechaDMY } from '@/utils/formatos'
 import NovAltasVista from './NovAltasVista.vue'
 import { utils, writeFileXLSX } from 'xlsx'
 import { agregaTitulosExcel } from '@/utils/reportes.js'
+import { getName, estadosNov } from '@/utils/tipos'
 
 const props = defineProps(['setHojaEdicion', 'hojaEditar'])
 // prueba de commir en github
@@ -34,8 +35,7 @@ const listaHeaders = [
   { title: 'Vto.', key: 'VTO' },
   { title: 'Titulo', key: 'TITULO' },
   { title: 'Dif. Cat.', key: 'DIFCAT' },
-  { title: 'Ap. Jub.', key: 'APJUB' },
-  { title: 'Periodo', key: 'PERIODO' },
+  { title: 'Ap. Jub.', key: 'AJUB' },
   { title: 'Fecha Grab.', key: 'FECHAGRABACION' },
   { title: 'Estado Reg.', key: 'ESTADOREGISTRO' }
 ]
@@ -164,8 +164,7 @@ function exportFile() {
       getVto(x.VTO),
       x.TITULO,
       x.DIFCAT,
-      x.APJUB,
-      getVto(x.PERIODO),
+      x.AJUB,
       getFechaDMY(x.FECHAGRABACION)
     ]
   })
@@ -187,7 +186,6 @@ function exportFile() {
     'Título',
     'Dif. cat.',
     'Ap. Jub.',
-    'Período',
     'Fecha Grab.'
   ]
   const filtros = ''
@@ -203,7 +201,6 @@ function exportFile() {
     { wch: 10 },
     { wch: 20 },
     { wch: 20 },
-    { wch: 10 },
     { wch: 10 },
     { wch: 10 },
     { wch: 10 },
@@ -247,7 +244,12 @@ function exportFile() {
   </v-container>
   <v-container>
     <v-container>
-      <v-btn color="primary" prepend-icon="mdi-plus" elevation="3" @click="handleModif(null)"
+      <v-btn
+        v-if="hojaEditar.ESTADOHOJAID != 4 && hojaEditar.ESTADOHOJAID != 6"
+        color="primary"
+        prepend-icon="mdi-plus"
+        elevation="3"
+        @click="handleModif(null)"
         >Nuevo registro</v-btn
       >
       <v-btn color="primary" @click="handleDownload" :disabled="!data">Descargar</v-btn>
@@ -280,12 +282,14 @@ function exportFile() {
           <tr class="pa-0 ma-0">
             <td class="text-center m-0 p-0 sticky">
               <botonTooltip
+                v-if="hojaEditar.ESTADOHOJAID != 4 && hojaEditar.ESTADOHOJAID != 6"
                 :icono="'mdi-pencil'"
                 :toolMsg="'Editar'"
                 :funcion="handleModif"
                 :itemid="item.ID"
               ></botonTooltip>
               <botonTooltip
+                v-if="hojaEditar.ESTADOHOJAID != 4 && hojaEditar.ESTADOHOJAID != 6"
                 :icono="'mdi-delete'"
                 :toolMsg="'Eliminar'"
                 :funcion="handleEliminar"
@@ -307,10 +311,9 @@ function exportFile() {
             <td class="text-center m-0 p-0">{{ getVto(item.VTO) }}</td>
             <td class="text-right m-0 p-0">{{ item.TITULO }}</td>
             <td class="text-right m-0 p-0">{{ item.DIFCAT }}</td>
-            <td class="text-center m-0 p-0">{{ item.APJUB == 1 ? 'SI' : 'NO' }}</td>
-            <td class="text-center m-0 p-0">{{ getVto(item.PERIODO) }}</td>
+            <td class="text-center m-0 p-0">{{ item.AJUB ? 'SI' : 'NO' }}</td>
             <td class="text-center m-0 p-0">{{ getFechaDMY(item.FECHAGRABACION) }}</td>
-            <td class="text-center m-0 p-0">{{ item.ESTADOREGISTRO }}</td>
+            <td class="text-center m-0 p-0">{{ getName(estadosNov, item.ESTADOREGISTRO) }}</td>
           </tr>
         </template>
       </v-data-table>

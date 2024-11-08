@@ -18,7 +18,7 @@ const periodo = ref(getVtoActual())
 const sexoSelected = ref(sexos[0])
 
 const registroVacio = ref({
-  IDREP: 0,
+  IDREP: 470,
   ORDEN: 0,
   AFILIADO: 0,
   DNI: 0,
@@ -36,7 +36,7 @@ const registroVacio = ref({
   AJUB: false,
   PERIODO: periodo,
   FECHAGRABACION: null,
-  ESTADOREGISTRO: 0,
+  ESTADOREGISTRO: 1,
   HOJAID: hojaId,
   ID: 0
 })
@@ -70,6 +70,10 @@ async function grabaRegistro() {
     mostrarAlert.value = true
     return
   }
+  let vto = ''
+  if (vencimiento.value != null) {
+    if (vencimiento.value.length > 0) vto = getFechaToAPIFromMMYYYY(vencimiento.value)
+  }
 
   let registroGrabar = {
     vREP: registroActual.value.IDREP,
@@ -84,7 +88,7 @@ async function grabaRegistro() {
     vCC: registroActual.value.CC,
     vCAT: registroActual.value.CAT,
     vANTIG: registroActual.value.ANTIG,
-    vVTO: getFechaToAPIFromMMYYYY(vencimiento.value),
+    vVTO: vto,
     vTITULO: registroActual.value.TITULO,
     vDIF_CAT: registroActual.value.DIFCAT,
     vAJUB: registroActual.value.AJUB ? 1 : 0,
@@ -101,7 +105,7 @@ async function grabaRegistro() {
       vIDHOJANOV: hojaId
     }
   }
-
+  console.log(registroGrabar)
   let grabarOk = await props.funcion(registroGrabar, registroActual.value.ID)
 
   if (grabarOk) {
@@ -121,7 +125,7 @@ function validarRegistro() {
   <v-container>
     <v-card>
       <v-form ref="form" v-model="formOK">
-        <v-card-title>Novedades de Haberes</v-card-title>
+        <v-card-title>Novedades de Altas</v-card-title>
         <v-card-subtitle>Agregar en Hoja Nº {{ hojaId }}</v-card-subtitle>
         <v-alert
           v-model="mostrarAlert"
@@ -206,7 +210,7 @@ function validarRegistro() {
             <v-row>
               <v-col cols="3">
                 <v-select
-                  label="Tipo Liq"
+                  label="Sexo"
                   :items="sexos"
                   item-title="name"
                   item-value="value"
@@ -289,18 +293,6 @@ function validarRegistro() {
                   label="Ap. Jub"
                   hide-details
                 ></v-checkbox>
-              </v-col>
-              <v-col cols="4">
-                <v-text-field v-model="periodo" hide-details="auto" label="Período"></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row v-if="registroActual.ID != 0">
-              <v-col cols="4">
-                <v-text-field
-                  v-model="registroActual.ESTADOREGISTRO"
-                  hide-details="auto"
-                  label="Estado"
-                ></v-text-field>
               </v-col>
             </v-row>
           </v-container>

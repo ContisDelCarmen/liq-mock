@@ -6,7 +6,7 @@ const { apiBase } = useEndPoints()
 
 //const urlAPI = 'http://www.serverburru2.duckdns.org:3005/api/'
 
-const urlAPI = apiBase.value + '/api/'
+//const urlAPI = apiBase.value + '/api/'
 const urlAPI_sp = 'https://josrferreyr-deno-api-su-79.deno.dev/'
 
 export async function grabarRegistro(url = '', data = {}, metodo = 'POST') {
