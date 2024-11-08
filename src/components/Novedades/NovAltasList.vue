@@ -34,12 +34,7 @@ const listaHeaders = [
   { title: 'Vto.', key: 'VTO' },
   { title: 'Titulo', key: 'TITULO' },
   { title: 'Dif. Cat.', key: 'DIFCAT' },
-<<<<<<< HEAD
   { title: 'Ap. Jub.', key: 'AJUB' },
-=======
-  { title: 'Ap. Jub.', key: 'APJUB' },
-  { title: 'Periodo', key: 'PERIODO' },
->>>>>>> 58751b412018936b918019d903cbc4c663074a6b
   { title: 'Fecha Grab.', key: 'FECHAGRABACION' },
   { title: 'Estado Reg.', key: 'ESTADOREGISTRO' }
 ]
