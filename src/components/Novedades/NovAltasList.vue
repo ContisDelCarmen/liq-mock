@@ -35,7 +35,6 @@ const listaHeaders = [
   { title: 'Titulo', key: 'TITULO' },
   { title: 'Dif. Cat.', key: 'DIFCAT' },
   { title: 'Ap. Jub.', key: 'AJUB' },
-  { title: 'Periodo', key: 'PERIODO' },
   { title: 'Fecha Grab.', key: 'FECHAGRABACION' },
   { title: 'Estado Reg.', key: 'ESTADOREGISTRO' }
 ]
@@ -168,7 +167,6 @@ function exportFile() {
       x.TITULO,
       x.DIFCAT,
       x.AJUB,
-      getVto(x.PERIODO),
       getFechaDMY(x.FECHAGRABACION)
     ]
   })
@@ -190,7 +188,6 @@ function exportFile() {
     'Título',
     'Dif. cat.',
     'Ap. Jub.',
-    'Período',
     'Fecha Grab.'
   ]
   const filtros = ''
@@ -206,7 +203,6 @@ function exportFile() {
     { wch: 10 },
     { wch: 20 },
     { wch: 20 },
-    { wch: 10 },
     { wch: 10 },
     { wch: 10 },
     { wch: 10 },
@@ -250,7 +246,12 @@ function exportFile() {
   </v-container>
   <v-container>
     <v-container>
-      <v-btn color="primary" prepend-icon="mdi-plus" elevation="3" @click="handleModif(null)"
+      <v-btn
+        v-if="hojaEditar.ESTADOHOJAID != 4 && hojaEditar.ESTADOHOJAID != 6"
+        color="primary"
+        prepend-icon="mdi-plus"
+        elevation="3"
+        @click="handleModif(null)"
         >Nuevo registro</v-btn
       >
       <v-btn color="primary" @click="handleDownload" :disabled="!data">Descargar</v-btn>
@@ -283,12 +284,14 @@ function exportFile() {
           <tr class="pa-0 ma-0">
             <td class="text-center m-0 p-0 sticky">
               <botonTooltip
+                v-if="hojaEditar.ESTADOHOJAID != 4 && hojaEditar.ESTADOHOJAID != 6"
                 :icono="'mdi-pencil'"
                 :toolMsg="'Editar'"
                 :funcion="handleModif"
                 :itemid="item.ID"
               ></botonTooltip>
               <botonTooltip
+                v-if="hojaEditar.ESTADOHOJAID != 4 && hojaEditar.ESTADOHOJAID != 6"
                 :icono="'mdi-delete'"
                 :toolMsg="'Eliminar'"
                 :funcion="handleEliminar"
@@ -311,7 +314,6 @@ function exportFile() {
             <td class="text-right m-0 p-0">{{ item.TITULO }}</td>
             <td class="text-right m-0 p-0">{{ item.DIFCAT }}</td>
             <td class="text-center m-0 p-0">{{ item.AJUB ? 'SI' : 'NO' }}</td>
-            <td class="text-center m-0 p-0">{{ getVto(item.PERIODO) }}</td>
             <td class="text-center m-0 p-0">{{ getFechaDMY(item.FECHAGRABACION) }}</td>
             <td class="text-center m-0 p-0">{{ item.ESTADOREGISTRO }}</td>
           </tr>
