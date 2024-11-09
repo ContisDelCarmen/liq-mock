@@ -1,7 +1,13 @@
 <script setup>
 import { ref } from 'vue'
-import { leerDatos, ejecutarSP } from './llamadaAPI'
-import { financial, getFechaToAPIFromMMYYYY, getPeriodoFromMMYYYY } from '@/utils/formatos'
+import { leerDatos, ejecutarSP, descargaTXT } from './llamadaAPI'
+import {
+  financial,
+  getFechaToAPIFromMMYYYY,
+  getPeriodoFromMMYYYY,
+  getFechaDMY
+} from '@/utils/formatos'
+import { utils, writeFileXLSX } from 'xlsx'
 
 const props = defineProps(['periodo'])
 console.log('periodo', props.periodo)
@@ -64,9 +70,6 @@ async function procesaDDJJ() {
   }
 
   await leerListaRegs()
-  //alertMensaje.value = 'Se agregó la liquidación'
-  //alertTipo.value = 'success'
-  //mostrarAlert.value = true
   mostrarAlert.value = true
   alertMensaje.value = 'Se actualizaron los datos de DDJJ'
   alertTipo.value = 'success'
@@ -75,39 +78,119 @@ async function procesaDDJJ() {
 }
 
 // Método para descargar el archivo
-async function downloadFile() {
+async function DescargaDDJJTXT() {
   // Realiza la llamada a la API usando fetch (o axios si prefieres)
-  const url =
-    'http://www.serverburru2.duckdns.org:3005/api/txt/djPrevTxtDDJJ?PeriodoDJ=' +
-    getPeriodoFromMMYYYY(props.periodo)
-  await fetch(url, {
-    method: 'GET',
-    headers: {
-      // Asegúrate de que este encabezado sea compatible con la API
-      'Content-Type': 'text/plain'
-    }
+
+  //const url =
+  //  'http://www.serverburru2.duckdns.org:3005/api/txt/djPrevTxtDDJJ?PeriodoDJ=' +
+  //  getPeriodoFromMMYYYY(props.periodo)
+  const url = 'txt/djPrevTxtDDJJ?PeriodoDJ=' + getPeriodoFromMMYYYY(props.periodo)
+
+  const urlDescarga = await descargaTXT(url)
+
+  if (urlDescarga == null) {
+    mostrarAlert.value = true
+    alertMensaje.value = 'No se pudo descargar el archivo'
+    alertTipo.value = 'error'
+    return
+  }
+
+  const a = document.createElement('a')
+  a.href = urlDescarga
+  a.download = 'ddjj_' + props.periodo + '.txt' // Nombre con el que se descargará el archivo
+  document.body.appendChild(a)
+  a.click() // Simula el clic para iniciar la descarga
+  a.remove() // Elimina el enlace del DOM
+  window.URL.revokeObjectURL(urlDescarga) // Limpia la URL creada
+}
+
+// genera el archivo excel
+function descargaExcel() {
+  let map1 = [['Declaración Jurada Previsional', '', '', 'Período', props.periodo]]
+  let linea = [null, null, null, null, null]
+  map1.push(linea)
+  linea = ['Totales de cálculo', '', '', 'Valores para DDJJ', '']
+  map1.push(linea)
+  linea = ['Item', 'Valor', '', 'Item', 'Valor']
+  map1.push(linea)
+  linea = [
+    'Cant. Agentes',
+    registroDJ.value.CANTAGENTES,
+    null,
+    'Cant. Agentes',
+    registroDJ.value.CANTAGENTES
+  ]
+  map1.push(linea)
+  linea = [
+    'Haberes C/Aporte',
+    registroDJ.value.HABCONAPORTE,
+    null,
+    'Rem. Total',
+    registroDJ.value.REMTOTAL
+  ]
+  map1.push(linea)
+  linea = [
+    'Remuneración Actual',
+    registroDJ.value.REMACTUAL,
+    null,
+    'Rem. SS',
+    registroDJ.value.REMSS
+  ]
+  map1.push(linea)
+  linea = [
+    'Remuneración Atrasada',
+    registroDJ.value.REMATRASADA,
+    null,
+    'Rem. 02',
+    registroDJ.value.REM02
+  ]
+  map1.push(linea)
+  linea = [
+    'Remuneración Excedente',
+    registroDJ.value.REMEXCEDENTE,
+    null,
+    'Rem. 03',
+    registroDJ.value.REM03
+  ]
+  map1.push(linea)
+  linea = [
+    'Aporte Jub.',
+    registroDJ.value.APORTEJUBILATORIO,
+    null,
+    'Rem. 04',
+    registroDJ.value.REM04
+  ]
+  map1.push(linea)
+  linea = [
+    'Patronal Jub.',
+    registroDJ.value.PATRONALJUBILATORIO,
+    null,
+    'Rem. 05',
+    registroDJ.value.REM05
+  ]
+  map1.push(linea)
+  linea = [
+    'Fecha de proceso',
+    getFechaDMY(registroDJ.value.FECHARESUMEN),
+    null,
+    'Rem. 06',
+    registroDJ.value.REM06
+  ]
+  map1.push(linea)
+  linea = [null, null, null, 'Rem. 07', registroDJ.value.REM07]
+  map1.push(linea)
+
+  const ws = utils.aoa_to_sheet(map1)
+
+  ws['!cols'] = [{ wch: 35 }, { wch: 15 }, { wch: 10 }, { wch: 35 }, { wch: 15 }]
+  /* create workbook and append worksheet */
+  const wb = utils.book_new()
+  utils.book_append_sheet(wb, ws, 'Data')
+
+  /* export to XLSX */
+  writeFileXLSX(wb, props.fileName || `${periodoId}_DDJJ.xlsx`, {
+    compression: true
   })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Error al obtener el archivo')
-      }
-      return response.blob() // Convierte la respuesta a blob para el archivo
-    })
-    .then((blob) => {
-      // Crea una URL de objeto para el blob
-      const url = window.URL.createObjectURL(blob)
-      // Crea un enlace para descargar el archivo
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'ddjj_' + props.periodo + '.txt' // Nombre con el que se descargará el archivo
-      document.body.appendChild(a)
-      a.click() // Simula el clic para iniciar la descarga
-      a.remove() // Elimina el enlace del DOM
-      window.URL.revokeObjectURL(url) // Limpia la URL creada
-    })
-    .catch((error) => {
-      console.error('Error al descargar el archivo:', error)
-    })
 }
 
 leerListaRegs()
@@ -122,7 +205,7 @@ leerListaRegs()
         color="primary"
         elevation="3"
         class="mx-2"
-        @click="downloadFile()"
+        @click="DescargaDDJJTXT()"
         >Genera TXT</v-btn
       >
       <v-btn
@@ -130,7 +213,7 @@ leerListaRegs()
         color="primary"
         elevation="3"
         class="mx-2"
-        @click="procesaDDJJ()"
+        @click="descargaExcel()"
         >Genera PDF</v-btn
       >
     </v-row>
@@ -218,7 +301,7 @@ leerListaRegs()
           </tr>
           <tr>
             <td>Fecha de Proceso</td>
-            <td class="text-right">{{ financial(registroDJ.FECHARESUMEN) }}</td>
+            <td class="text-right">{{ getFechaDMY(registroDJ.FECHARESUMEN) }}</td>
             <td></td>
             <td>Rem 06</td>
             <td class="text-right">{{ financial(registroDJ.REM06) }}</td>
