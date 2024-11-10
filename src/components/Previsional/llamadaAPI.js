@@ -146,3 +146,21 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
 
   return { estado, operacionOk, errmsg, valorError, valorSalida, errorMsg }
 }
+
+export async function descargaTXT(url) {
+  // Realiza la llamada a la API usando fetch (o axios si prefieres)
+  const urlDescargar = urlAPI + url
+  const response = await fetch(urlDescargar, {
+    method: 'GET',
+    headers: {
+      // Asegúrate de que este encabezado sea compatible con la API
+      'Content-Type': 'text/plain'
+    }
+  })
+  if (!response.ok) {
+    return null
+  }
+  const datos = await response.blob()
+  const urlSalida = window.URL.createObjectURL(datos)
+  return urlSalida
+}
