@@ -3,7 +3,7 @@ import { ref } from 'vue';
 const endpoints = {
   desa: {
     boletas: 'https://api-boletas-9jn3t0ca7a3j.deno.dev', 
-    base: 'https://midliq-api-1mmm7pt8bwsa.deno.dev'
+    base: 'https://midliq-api-2ak843dpsabv.deno.dev'
   },
   prod: {
     boletas: 'https://api-boletas.deno.dev',
