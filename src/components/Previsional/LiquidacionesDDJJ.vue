@@ -31,7 +31,7 @@ const alertTipo = ref(null)
 async function leerListaRegs() {
   isPending.value = true
   const { datos, operacionOk } = await leerDatos(
-    'en/djPrevLiqsPeriodoDJ?PeriodoDJ=' + periodoActivo
+    'view/djPrevLiqsPeriodoDJ?PeriodoDJ=' + periodoActivo
   )
   data.value = datos
   lecturaListaRegs.value = operacionOk

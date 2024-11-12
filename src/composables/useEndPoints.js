@@ -3,7 +3,8 @@ import { ref } from 'vue';
 const endpoints = {
   desa: {
     boletas: 'https://api-boletas-9jn3t0ca7a3j.deno.dev', 
-    base: 'https://midliq-api-hdprsd64qb7n.deno.dev'
+    base: 'https://midliq-api-hdprsd64qb7n.deno.dev',
+    sp: 'https://josrferreyr-deno-api-su-79.deno.dev',
   },
   prod: {
     boletas: 'https://api-boletas.deno.dev',
@@ -13,6 +14,7 @@ const endpoints = {
 
 const apiBoletas = ref(endpoints.prod.boletas)
 const apiBase = ref(endpoints.prod.base)
+const apiSp = ref(endpoints.prod.sp)
 const env = ref('Prod')
 
 export function useEndPoints() {
@@ -26,10 +28,11 @@ export function useEndPoints() {
   function setDesa() {
     apiBase.value = endpoints.desa.base
     apiBoletas.value = endpoints.desa.boletas
+    apiSp.value = endpoints.desa.sp
     env.value = 'Desa'
   }
 
   return {
-    apiBase, apiBoletas, setDesa, setProd, env
+    apiBase, apiBoletas, apiSp, setDesa, setProd, env
   };
 }
