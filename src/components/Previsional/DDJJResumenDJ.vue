@@ -29,7 +29,7 @@ const alertTipo = ref(null)
 
 async function leerListaRegs() {
   isPending.value = true
-  const { datos, operacionOk } = await leerDatos('djPrevResumenDJ?Id=' + periodoId)
+  const { datos, operacionOk } = await leerDatos('en/djPrevResumenDJ?Id=' + periodoId)
 
   data.value = datos
   lecturaListaRegs.value = operacionOk
