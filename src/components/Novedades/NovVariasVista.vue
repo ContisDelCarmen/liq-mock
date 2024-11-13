@@ -11,7 +11,7 @@ let registroActual = ref({})
 const form = ref(null)
 const formOK = ref(false)
 
-const vencimiento = ref(getVtoActual())
+const vencimiento = ref(null)
 const periodo = ref(getVtoActual())
 
 const registroVacio = ref({
@@ -69,7 +69,7 @@ async function grabaRegistro() {
     vP1: registroActual.value.PARAM1,
     vP2: registroActual.value.PARAM2,
     vVTO: vto,
-    vIMP: registroActual.value.IMPORTE,
+    vIMP: parseFloat(registroActual.value.IMPORTE),
     vIDHOJANOV: hojaId,
     vPERIODO: getFechaToAPIFromMMYYYY(periodo.value)
   }

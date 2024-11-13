@@ -84,7 +84,7 @@ async function grabarSP(item, id) {
   }
   const { valorError, valorSalida } = await ejecutarSP(url, item)
   if (valorError == 0) {
-    await leerHojas()
+    await leerHojas(props.filtros.getFiltroString())
     alertMensaje.value = 'Se grabó la hoja Nº ' + valorSalida
     alertTipo.value = 'success'
     mostrarAlert.value = true
@@ -102,7 +102,7 @@ async function CambiarEstadoHojaSP(id) {
 
   const { valorError, errorMsg } = await ejecutarSP(url, item)
   if (valorError == 0) {
-    await leerHojas()
+    await leerHojas(props.filtros.getFiltroString())
     alertMensaje.value = 'Se actualizó el estado de la hoja Nº' + id
     alertTipo.value = 'success'
     mostrarAlert.value = true
@@ -129,6 +129,7 @@ const lecturaHojas = ref(true)
 async function leerHojas(filtro = null) {
   let url = 'view/hojaNov'
   if (filtro !== null) url = url + '?' + filtro
+  url = url + '&sort={"Id":"asc"}'
   isPending.value = true
   const { datos, operacionOk } = await leerDatos(url)
   data.value = datos
