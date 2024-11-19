@@ -1,13 +1,11 @@
-// Ejemplo implementando el metodo POST:
-
 import { useEndPoints } from '@/composables/useEndPoints'
 
-const { apiBase } = useEndPoints()
+const { apiBase, apiSp } = useEndPoints()
 
 //const urlAPI = 'http://www.serverburru2.duckdns.org:3005/api/'
-
+//const urlAPI_sp = 'https://josrferreyr-deno-api-su-79.deno.dev/'
+const urlAPI_sp = apiSp.value + '/'
 const urlAPI = apiBase.value + '/api/'
-const urlAPI_sp = 'https://josrferreyr-deno-api-su-79.deno.dev/'
 
 export async function grabarRegistro(url = '', data = {}, metodo = 'POST') {
   let estado = 0
@@ -90,10 +88,11 @@ export async function leerDatos(url) {
   try {
     response = await fetch(urlAPI + url)
     estado = response.status
-
+    console.log(response)
     if (response.ok) {
       datos = await response.json()
     }
+    console.log(datos)
     operacionOk = response.ok
     if (response.status == 404) operacionOk = true
   } catch (error) {
@@ -110,7 +109,7 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   let operacionOk = false
   let errmsg = ''
   let valorError = -1
-  let valorSalida = 0
+  let valorSalida = -1
   let errorMsg = ''
   //console.log('dirección: ', urlAPI + url)
   //console.log('datos:', JSON.stringify(data))
@@ -131,10 +130,8 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
     })
     estado = response.status
     operacionOk = response.ok
-    let datos = await response.json()
-    console.log(datos)
     if (response.ok) {
-      //let datos = await response.json()
+      let datos = await response.json()
       valorError = datos.out.ValorError
       valorSalida = datos.out.ValorSalida
       errorMsg = datos.out.vErrorMsg
@@ -149,4 +146,22 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   }
 
   return { estado, operacionOk, errmsg, valorError, valorSalida, errorMsg }
+}
+
+export async function descargaTXT(url) {
+  // Realiza la llamada a la API usando fetch (o axios si prefieres)
+  const urlDescargar = urlAPI + url
+  const response = await fetch(urlDescargar, {
+    method: 'GET',
+    headers: {
+      // Asegúrate de que este encabezado sea compatible con la API
+      'Content-Type': 'text/plain'
+    }
+  })
+  if (!response.ok) {
+    return null
+  }
+  const datos = await response.blob()
+  const urlSalida = window.URL.createObjectURL(datos)
+  return urlSalida
 }

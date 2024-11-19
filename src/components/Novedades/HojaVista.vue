@@ -1,6 +1,14 @@
 <script setup>
 import { ref } from 'vue'
-import { months, tipoCarga, tipoHoja, tipoLiq, getObjetList } from '@/utils/tipos'
+import {
+  months,
+  tipoCarga,
+  tipoHoja,
+  tipoLiq,
+  getObjetList,
+  getName,
+  estadosHoja
+} from '@/utils/tipos'
 import { rules } from '@/utils/reglasValidacion'
 
 const props = defineProps(['Hoja', 'cerrar', 'funcion'])
@@ -50,9 +58,10 @@ if (hojaActual.value) {
     ID: 0,
     GRUPOADICIONAL: 0,
     FECHACREACION: fechaCreacionFormat,
-    ESTADOHOJAID: 0
+    ESTADOHOJAID: 1
   }
 }
+const estadoHojaTxt = getName(estadosHoja, hojaActual.value.ESTADOHOJAID)
 
 const mostrarAlert = ref(false)
 
@@ -106,7 +115,7 @@ async function grabaRegistro() {
         <v-container>
           <v-row>
             <v-col cols="2">
-              <v-text-field
+              <v-text-field v-if="hojaActual.ID != 0"
                 v-model="hojaActual.ID"
                 hide-details="auto"
                 label="Id"
@@ -178,19 +187,21 @@ async function grabaRegistro() {
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row v-if="hojaActual.ID != 0">
             <v-col cols="4">
               <v-text-field
                 v-model="fechaCreacionFormat"
                 hide-details="auto"
                 label="Fecha Creación"
+                readonly=""
               ></v-text-field>
             </v-col>
-            <v-col cols="4">
+            <v-col v-if="hojaActual.ID !== 0" cols="4">
               <v-text-field
-                v-model="hojaActual.ESTADOHOJAID"
+                v-model="estadoHojaTxt"
                 hide-details="auto"
                 label="Estado"
+                readonly=""
               ></v-text-field>
             </v-col>
           </v-row>

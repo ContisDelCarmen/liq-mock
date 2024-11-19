@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import { months, tipoCarga, tipoHoja, tipoLiq, getObjetList } from '@/utils/tipos'
-import { getPeriodoFromMMYYYY } from '@/utils/formatos'
+import { tipoCarga, tipoHoja, tipoLiq } from '@/utils/tipos'
+import { getPeriodoFromMMYYYY, getVtoActual } from '@/utils/formatos'
 import { rules } from '@/utils/reglasValidacion'
 
 const props = defineProps(['filtrar', 'filtros'])
@@ -35,7 +35,7 @@ const tipoCargaSelected = ref(tipoCargaFilter[0])
 const tipoHojaSelected = ref(tipoHojaFilter[0])
 const liqSelected = ref(tipoLiqFilter[0])
 const idHoja = ref(null)
-const periodo = ref('')
+const periodo = ref(getVtoActual())
 
 function ObtieneFiltro() {
   let filtro = ''

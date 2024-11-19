@@ -2,9 +2,8 @@
 import { ref } from 'vue'
 import HojaVista from './HojaVista.vue'
 import Confirmacion from './Confirmacion.vue'
-import { getName, tipoCarga, tipoHoja, tipoLiq } from '@/utils/tipos'
-import { estados } from '@/utils/tipos'
-import { leerDatos, grabarRegistro, eliminarRegistro, ejecutarSP } from './llamadaAPI'
+import { getName, tipoCarga, estadosHoja } from '@/utils/tipos'
+import { leerDatos, ejecutarSP } from './llamadaAPI'
 import botonTooltip from './botonTooltip.vue'
 import { getVto, getFechaDMY } from '@/utils/formatos'
 import HojasListFilter from './HojasListFilter.vue'
@@ -28,17 +27,7 @@ const mostrarAlert = ref(false)
 const alertMensaje = ref(null)
 const alertTipo = ref(null)
 
-// manejadores de búsqueda
-//const filtroBusqueda = ref(null)
-//const buscar = ref(false)
-
-//function establecerFiltrar(filtro) {
-//  filtroBusqueda.value = filtro
-//  buscar.value = 1
-//}
-
 // manejadores de altas, bajas y modificaciones
-
 const itemMostrar = ref({
   Nro: 0,
   Tipo: 'Sin Tipo'
@@ -52,13 +41,22 @@ function handleModif(itemid) {
 }
 
 const itemEliminar = ref(0)
+const accionHoja = ref(0)
 let muestraConfirmacion = ref(false)
 
-function handleEliminar(itemid) {
+function handleAnular(itemid) {
   mostrarAlert.value = false
   itemEliminar.value = itemid
+  accionHoja.value = 6
   muestraConfirmacion.value = true
 }
+function handleCerrarHoja(itemid) {
+  mostrarAlert.value = false
+  itemEliminar.value = itemid
+  accionHoja.value = 4
+  muestraConfirmacion.value = true
+}
+
 function cierraConfirmacion() {
   muestraConfirmacion.value = false
 }
@@ -86,7 +84,7 @@ async function grabarSP(item, id) {
   }
   const { valorError, valorSalida } = await ejecutarSP(url, item)
   if (valorError == 0) {
-    await leerHojas()
+    await leerHojas(props.filtros.getFiltroString())
     alertMensaje.value = 'Se grabó la hoja Nº ' + valorSalida
     alertTipo.value = 'success'
     mostrarAlert.value = true
@@ -98,13 +96,13 @@ async function grabarSP(item, id) {
 async function CambiarEstadoHojaSP(id) {
   let item = {
     vIDHOJANOV: id,
-    vIDESTADOHOJA: 7
+    vIDESTADOHOJA: accionHoja.value
   }
   let url = 'sp/HojaUpdEstado'
 
   const { valorError, errorMsg } = await ejecutarSP(url, item)
   if (valorError == 0) {
-    await leerHojas()
+    await leerHojas(props.filtros.getFiltroString())
     alertMensaje.value = 'Se actualizó el estado de la hoja Nº' + id
     alertTipo.value = 'success'
     mostrarAlert.value = true
@@ -131,6 +129,7 @@ const lecturaHojas = ref(true)
 async function leerHojas(filtro = null) {
   let url = 'view/hojaNov'
   if (filtro !== null) url = url + '?' + filtro
+  url = url + '&sort={"Id":"asc"}'
   isPending.value = true
   const { datos, operacionOk } = await leerDatos(url)
   data.value = datos
@@ -190,21 +189,30 @@ if (props.filtros.getFiltroString() != null) leerHojas(props.filtros.getFiltroSt
           <tr class="pa-0 ma-0">
             <td class="text-center m-0 p-0 sticky">
               <botonTooltip
+                v-if="item.ESTADOHOJAID != 4 && item.ESTADOHOJAID != 6"
                 :icono="'mdi-pencil'"
                 :toolMsg="'Editar'"
                 :funcion="handleModif"
                 :itemid="item.ID"
               ></botonTooltip>
               <botonTooltip
+                v-if="item.ESTADOHOJAID != 4 && item.ESTADOHOJAID != 6"
                 :icono="'mdi-delete'"
                 :toolMsg="'Eliminar'"
-                :funcion="handleEliminar"
+                :funcion="handleAnular"
                 :itemid="item.ID"
               ></botonTooltip>
               <botonTooltip
                 :icono="'mdi-list-box-outline'"
                 :toolMsg="'Editar Registros'"
                 :funcion="handleEditarRegistros"
+                :itemid="item.ID"
+              ></botonTooltip>
+              <botonTooltip
+                v-if="item.ESTADOHOJAID != 4 && item.ESTADOHOJAID != 6"
+                :icono="'mdi-check-bold'"
+                :toolMsg="'Cerrar'"
+                :funcion="handleCerrarHoja"
                 :itemid="item.ID"
               ></botonTooltip>
             </td>
@@ -216,7 +224,7 @@ if (props.filtros.getFiltroString() != null) leerHojas(props.filtros.getFiltroSt
             <td class="text-left m-0 p-0">{{ item.TIPOLIQUIDACIONDESCRIPCION }}</td>
             <td class="text-center m-0 p-0">{{ item.GRUPOADICIONAL }}</td>
             <td class="text-center m-0 p-0">{{ getFechaDMY(item.FECHACREACION) }}</td>
-            <td class="text-center m-0 p-0">{{ getName(estados, item.ESTADOHOJAID) }}</td>
+            <td class="text-center m-0 p-0">{{ getName(estadosHoja, item.ESTADOHOJAID) }}</td>
           </tr>
         </template>
       </v-data-table>
@@ -231,8 +239,17 @@ if (props.filtros.getFiltroString() != null) leerHojas(props.filtros.getFiltroSt
 
   <v-dialog v-model="muestraConfirmacion" max-width="80%" persistent="">
     <confirmacion
+      v-if="accionHoja == 6"
       :titulo="'Anular Hoja'"
       :mensaje="'Seguro que desea anular la hoja?'"
+      :cerrar="cierraConfirmacion"
+      :aceptar="CambiarEstadoHojaSP"
+      :parametro="itemEliminar"
+    ></confirmacion>
+    <confirmacion
+      v-if="accionHoja == 4"
+      :titulo="'Cerrar Hoja'"
+      :mensaje="'Seguro que desea cerrar la hoja?'"
       :cerrar="cierraConfirmacion"
       :aceptar="CambiarEstadoHojaSP"
       :parametro="itemEliminar"

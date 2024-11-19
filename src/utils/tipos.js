@@ -74,26 +74,54 @@ export const tipoLiq = [
   }
 ]
 
-// tipo de liquidacion
-export const estados = [
+// Estado de Hojas
+export const estadosHoja = [
   {
-    name: 'Cargada',
+    name: 'CREADA',
     value: 1
   },
   {
-    name: 'Anulada',
-    value: 5
-  },
-  {
-    name: 'Verificada',
+    name: 'CARGADA EN DISCO',
     value: 2
   },
   {
-    name: 'Transformada',
+    name: 'EN PROCESO',
     value: 3
   },
   {
-    name: 'Otro estado',
+    name: 'FINALIZADA',
+    value: 4
+  },
+  {
+    name: 'AUTORIZADA',
+    value: 5
+  },
+  {
+    name: 'ANULADA',
+    value: 6
+  }
+]
+
+// Estado de Hojas
+export const estadosNov = [
+  {
+    name: 'PROCESADO',
+    value: 0
+  },
+  {
+    name: 'CARGADO',
+    value: 1
+  },
+  {
+    name: 'INVALIDO',
+    value: 2
+  },
+  {
+    name: 'SIN VALIDAR',
+    value: 3
+  },
+  {
+    name: 'PARA PROCESAR',
     value: 4
   }
 ]

@@ -11,11 +11,11 @@ let registroActual = ref({})
 const form = ref(null)
 const formOK = ref(false)
 
-const vencimiento = ref(getVtoActual())
+const vencimiento = ref(null)
 const periodo = ref(getVtoActual())
 
 const registroVacio = ref({
-  IDREP: 0,
+  IDREP: 470,
   ORDEN: 0,
   CODIGO: 0,
   SUBCODIGO: 0,
@@ -57,6 +57,10 @@ async function grabaRegistro() {
     return
   }
 
+  let vto = ''
+  if (vencimiento.value != null) {
+    if (vencimiento.value.length > 0) vto = getFechaToAPIFromMMYYYY(vencimiento.value)
+  }
   let registroGrabar = {
     vIDREP: registroActual.value.IDREP,
     vORDEN: registroActual.value.ORDEN,
@@ -64,8 +68,8 @@ async function grabaRegistro() {
     vSUBCOD: registroActual.value.SUBCODIGO,
     vP1: registroActual.value.PARAM1,
     vP2: registroActual.value.PARAM2,
-    vVTO: getFechaToAPIFromMMYYYY(vencimiento.value),
-    vIMP: registroActual.value.IMPORTE,
+    vVTO: vto,
+    vIMP: parseFloat(registroActual.value.IMPORTE),
     vIDHOJANOV: hojaId,
     vPERIODO: getFechaToAPIFromMMYYYY(periodo.value)
   }
@@ -77,6 +81,7 @@ async function grabaRegistro() {
       vFECHAGRAB: registroActual.value.FECHAGRABACION
     }
   }
+
   console.log(registroGrabar)
   let grabarOk = await props.funcion(registroGrabar, registroActual.value.ID)
 
@@ -97,7 +102,7 @@ function validarRegistro() {
   <v-container>
     <v-card>
       <v-form ref="form" v-model="formOK">
-        <v-card-title>Novedades de Haberes</v-card-title>
+        <v-card-title>Novedades Varias</v-card-title>
         <v-card-subtitle>Agregar en Hoja Nº {{ hojaId }}</v-card-subtitle>
         <v-alert
           v-model="mostrarAlert"
@@ -151,7 +156,7 @@ function validarRegistro() {
                 <v-text-field
                   v-model="registroActual.PARAM1"
                   hide-details="auto"
-                  label="Clase"
+                  label="P1"
                   :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 3)]"
                 ></v-text-field>
               </v-col>
@@ -159,11 +164,11 @@ function validarRegistro() {
                 <v-text-field
                   v-model="registroActual.PARAM2"
                   hide-details="auto"
-                  label="Días"
+                  label="P2"
                   :rules="[
                     ...rules.number,
                     (val) => rules.longitudEntre(val, 1, 2),
-                    (val) => rules.rango(val, 0, 30)
+                    (val) => rules.rango(val, 0, 99)
                   ]"
                 ></v-text-field>
               </v-col>
@@ -181,20 +186,7 @@ function validarRegistro() {
                   v-model="registroActual.IMPORTE"
                   hide-details="auto"
                   label="Importe"
-                  :rules="rules.numDecimal"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row>
-              <v-col cols="3">
-                <v-text-field v-model="periodo" hide-details="auto" label="Período"></v-text-field>
-              </v-col>
-              <v-col cols="3" v-if="registroActual.ID != 0">
-                <v-text-field
-                  v-model="registroActual.ESTADOREGISTRO"
-                  hide-details="auto"
-                  label="Estado"
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
                 ></v-text-field>
               </v-col>
             </v-row>
