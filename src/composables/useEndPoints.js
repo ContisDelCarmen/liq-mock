@@ -4,11 +4,12 @@ const endpoints = {
   desa: {
     boletas: 'https://api-boletas-9jn3t0ca7a3j.deno.dev', 
     base: 'https://midliq-api-hdprsd64qb7n.deno.dev',
-    sp: 'https://josrferreyr-deno-api-su-79.deno.dev',
+    sp: 'https://josrferreyr-deno-api-su-79--desarrollo.deno.dev',
   },
   prod: {
     boletas: 'https://api-boletas.deno.dev',
-    base: 'https://midliq-api-jr2sc3ef7gnx.deno.dev'
+    base: 'https://midliq-api-jr2sc3ef7gnx.deno.dev',
+    sp: 'https://josrferreyr-deno-api-su-79.deno.dev'
   }
 }
 
@@ -22,6 +23,7 @@ export function useEndPoints() {
   function setProd() {
     apiBase.value = endpoints.prod.base
     apiBoletas.value = endpoints.prod.boletas
+    apiSp.value = endpoints.prod.sp
     env.value = 'Prod'
   }
 
