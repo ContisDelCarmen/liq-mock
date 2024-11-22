@@ -19,7 +19,7 @@ export const useUserStore = defineStore('userStore', {
     getters: {
         isRegistred: (state) => !!state.user,
         isAuthenticated: (state) => !!state.auth,
-        isAdmin:(state) => !!state.user && state.user.ROL===4 ,
+        isAdmin:(state) => !!state.user && state.user.ROL===5 ,
         isValid: (state) => !!state.pers,
         userName: (state) => state.user?.name || '',
         checkPassword(state) {

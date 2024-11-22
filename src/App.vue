@@ -13,7 +13,7 @@ const storeFilter = useFilterStore()
 setProd()
 storeFilter.setConfig()
 
-const { itemsMenu, setItemsMenu } = useItemsMenu();
+const { itemsMenu } = useItemsMenu();
 
 // access the `store` variable anywhere in the component ✨
 const store = useUserStore()
