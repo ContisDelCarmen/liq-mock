@@ -13,14 +13,14 @@ const liq = [{
     name: 'Adicional',
     value: '5',
 }, {
-    name: '1er SAC',
+    name: 'SAC',
     value: '2'
 }, {
-    name: '2Do SAC',
-    value: '3'
+    name: 'Liq Final',
+    value: '21'
 }, {
-    name: 'Otro tipo',
-    value: '9',
+    name: 'Ayuda Escolar',
+    value: '10',
     disabled: true
 }]
 
