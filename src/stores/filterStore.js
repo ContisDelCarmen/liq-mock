@@ -12,8 +12,9 @@ console.log(data)
 const liqMap = new Map([
   ['1', "Mensual"],
   ['5', "Adicional"],
-  ['2', "1er SAC"],
-  ['3', "2Do SAC"],
+  ['2', "SAC"],
+  ['21', "Liq Final"],
+  ['10', "Ayuda Escolar"]
 ]);
 
 
