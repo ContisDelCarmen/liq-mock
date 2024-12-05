@@ -65,12 +65,16 @@ export const tipoLiq = [
     value: 5
   },
   {
-    name: '1er SAC',
+    name: 'SAC',
     value: 2
   },
   {
-    name: '2do SAC',
-    value: 3
+    name: 'Liq Final',
+    value: 21
+  },
+  {
+    name: 'Ayuida escolar',
+    value: 10
   }
 ]
 
