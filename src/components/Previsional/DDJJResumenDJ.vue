@@ -179,6 +179,16 @@ function descargaExcel() {
   map1.push(linea)
   linea = [null, null, null, 'Rem. 07', registroDJ.value.REM07]
   map1.push(linea)
+  linea = [null, null, null, 'Rem. 08', registroDJ.value.REM08]
+  map1.push(linea)
+  linea = [null, null, null, 'Rem. 09', registroDJ.value.REM09]
+  map1.push(linea)
+  linea = [null, null, null, 'Sdo + Adi', registroDJ.value.SUELDOYADI]
+  map1.push(linea)
+  linea = [null, null, null, 'SAC', registroDJ.value.SAC]
+  map1.push(linea)
+  linea = [null, null, null, 'Asig. Fam', registroDJ.value.ASIGFAMILIAR]
+  map1.push(linea)
 
   const ws = utils.aoa_to_sheet(map1)
 
@@ -313,6 +323,44 @@ leerListaRegs()
             <td>Rem 07</td>
             <td class="text-right">{{ financial(registroDJ.REM07) }}</td>
           </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Rem 08</td>
+            <td class="text-right">{{ financial(registroDJ.REM08) }}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Rem 09</td>
+            <td class="text-right">{{ financial(registroDJ.REM09) }}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Sdo + Adi</td>
+            <td class="text-right">{{ financial(registroDJ.SUELDOYADI) }}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>SAC</td>
+            <td class="text-right">{{ financial(registroDJ.SAC) }}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Asig. Fam.</td>
+            <td class="text-right">{{ financial(registroDJ.ASIGFAMILIAR) }}</td>
+          </tr>
+
+
+
         </tbody>
       </v-table>
     </div>
