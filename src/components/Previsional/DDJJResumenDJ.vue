@@ -224,7 +224,7 @@ leerListaRegs()
         elevation="3"
         class="mx-2"
         @click="descargaExcel()"
-        >Genera PDF</v-btn
+        >Genera Planilla</v-btn
       >
     </v-row>
     <v-row>
@@ -358,9 +358,6 @@ leerListaRegs()
             <td>Asig. Fam.</td>
             <td class="text-right">{{ financial(registroDJ.ASIGFAMILIAR) }}</td>
           </tr>
-
-
-
         </tbody>
       </v-table>
     </div>

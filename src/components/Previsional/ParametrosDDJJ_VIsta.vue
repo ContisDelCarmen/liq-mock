@@ -2,52 +2,32 @@
 import { ref } from 'vue'
 import { getVto, getVtoActual, getFechaToAPIFromMMYYYY } from '@/utils/formatos'
 import { rules } from '@/utils/reglasValidacion'
-import { sexos, getObjetList } from '@/utils/tipos'
 
-const props = defineProps(['Registro', 'cerrar', 'funcion', 'hojaId'])
+const props = defineProps(['Registro', 'cerrar', 'funcion'])
 let registroOrigen = props.Registro
-let hojaId = props.hojaId
 let registroActual = ref({})
 
 const form = ref(null)
 const formOK = ref(false)
 
-const vencimiento = ref(getVtoActual())
 const periodo = ref(getVtoActual())
-
-const sexoSelected = ref(sexos[0])
+const periodo_hasta = ref(null)
 
 const registroVacio = ref({
-  IDREP: 470,
-  ORDEN: 0,
-  AFILIADO: 0,
-  DNI: 0,
-  CUIL: 0,
-  APELLIDO: '',
-  NOMBRE: '',
-  SEXO: '',
-  TE: 0,
-  CC: 0,
-  CAT: 0,
-  ANTIG: 0,
-  VTO: vencimiento,
-  TITULO: 0,
-  DIFCAT: 0,
-  AJUB: false,
-  PERIODO: periodo,
-  FECHAGRABACION: null,
-  ESTADOREGISTRO: 1,
-  HOJAID: hojaId,
+  APJUB_MIN: 0,
+  APJUB_MAX: 0,
+  APJUB_PORC_REP: 11,
+  CONTJUB_PORC: 10.17,
+  APOS_MIN: 0,
+  APOS_MAX: 0,
+  CONTOS_MIN: 0,
   ID: 0
 })
 
 if (registroOrigen) {
-  console.log(registroOrigen.APJUB)
   registroActual.value = { ...registroOrigen }
-  registroActual.value.AJUB = registroOrigen.APJUB == 1
-  vencimiento.value = getVto(registroOrigen.VTO)
   periodo.value = getVto(registroOrigen.PERIODO)
-  sexoSelected.value = getObjetList(sexos, registroOrigen.SEXO)
+  periodo_hasta.value = getVto(registroOrigen.VTO)
 } else {
   registroActual.value = registroVacio.value
 }
@@ -71,38 +51,27 @@ async function grabaRegistro() {
     return
   }
   let vto = ''
-  if (vencimiento.value != null) {
-    if (vencimiento.value.length > 0) vto = getFechaToAPIFromMMYYYY(vencimiento.value)
+  if (periodo_hasta.value != null) {
+    if (periodo_hasta.value.length > 0) vto = getFechaToAPIFromMMYYYY(periodo_hasta.value)
   }
 
   let registroGrabar = {
-    vREP: registroActual.value.IDREP,
-    vORD: registroActual.value.ORDEN,
-    vAFI: registroActual.value.AFILIADO,
-    vDNI: registroActual.value.DNI,
-    vCUIL: registroActual.value.CUIL,
-    vAPE: registroActual.value.APELLIDO,
-    vNOM: registroActual.value.NOMBRE,
-    vSEXO: sexoSelected.value.value,
-    vTE: registroActual.value.TE,
-    vCC: registroActual.value.CC,
-    vCAT: registroActual.value.CAT,
-    vANTIG: registroActual.value.ANTIG,
-    vVTO: vto,
-    vTITULO: registroActual.value.TITULO,
-    vDIF_CAT: registroActual.value.DIFCAT,
-    vAJUB: registroActual.value.AJUB ? 1 : 0,
-    vPERIODO: getFechaToAPIFromMMYYYY(periodo.value)
+    vPERIODO: getFechaToAPIFromMMYYYY(periodo.value),
+    vPERIODO_HASTA: vto,
+    vAPJUB_MIN: registroActual.value.APJUB_MIN,
+    vAPJUB_MAX: registroActual.value.APJUB_MAX,
+    vAPJUB_PORC: registroActual.value.APJUB_PORC_REP,
+    vCONTJUB_MAX: registroActual.value.CONTJUB_MAX,
+    vCONTJUB_PORC: registroActual.value.CONTJUB_PORC,
+    vAPOS_MIN: registroActual.value.APOS_MIN,
+    vAPOS_MAX: registroActual.value.APOS_MAX,
+    vCONTOS_MIN: registroActual.value.CONTOS_MIN,
+    vCONTOS_MAX: registroActual.value.CONTOS_MAX
   }
   if (registroActual.value.ID !== 0) {
     registroGrabar = {
-      vIDNOV: registroActual.value.ID,
+      vID: registroActual.value.ID,
       ...registroGrabar
-    }
-  } else {
-    registroGrabar = {
-      ...registroGrabar,
-      vIDHOJANOV: hojaId
     }
   }
   console.log(registroGrabar)
@@ -125,8 +94,7 @@ function validarRegistro() {
   <v-container>
     <v-card>
       <v-form ref="form" v-model="formOK">
-        <v-card-title>Novedades de Altas</v-card-title>
-        <v-card-subtitle>Agregar en Hoja Nº {{ hojaId }}</v-card-subtitle>
+        <v-card-title>Parámetros de DDJJ</v-card-title>
         <v-alert
           v-model="mostrarAlert"
           border="start"
@@ -140,159 +108,103 @@ function validarRegistro() {
         <v-card-text>
           <v-container style="height: 60vh; overflow-y: scroll">
             <v-row>
-              <v-col cols="4">
-                <v-text-field
-                  v-model="registroActual.IDREP"
-                  hide-details="auto"
-                  label="Repartición"
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 7)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="4">
-                <v-text-field
-                  v-model="registroActual.ORDEN"
-                  hide-details="auto"
-                  label="Nro. Boleta"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 7)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="4">
-                <v-text-field
-                  v-model="registroActual.AFILIADO"
-                  hide-details="auto"
-                  label="Afiliado"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 7)]"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
               <v-col cols="6">
                 <v-text-field
-                  v-model="registroActual.APELLIDO"
+                  v-model="periodo"
                   hide-details="auto"
-                  label="Apellido"
-                  lazy-validation
-                  :rules="[(val) => rules.longitudEntre(val, 3, 100)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="registroActual.NOMBRE"
-                  hide-details="auto"
-                  label="Nombre"
-                  lazy-validation
-                  :rules="[(val) => rules.longitudEntre(val, 3, 100)]"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="registroActual.DNI"
-                  hide-details="auto"
-                  label="DNI"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 9)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="registroActual.CUIL"
-                  hide-details="auto"
-                  label="CUIL"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 11, 11)]"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="3">
-                <v-select
-                  label="Sexo"
-                  :items="sexos"
-                  item-title="name"
-                  item-value="value"
-                  v-model="sexoSelected"
-                  return-object
+                  label="desde"
+                  :rules="[...rules.mmyyyy, (val) => rules.longitudEntre(val, 1, 7)]"
                 >
-                </v-select>
+                </v-text-field>
               </v-col>
-              <v-col cols="3">
+              <v-col cols="6">
                 <v-text-field
-                  v-model="registroActual.TE"
+                  v-model="periodo_hasta"
                   hide-details="auto"
-                  label="Tipo Emp."
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="registroActual.CC"
-                  hide-details="auto"
-                  label="Sit. Rev."
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="registroActual.CAT"
-                  hide-details="auto"
-                  label="categoría"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="4">
-                <v-text-field
-                  v-model="registroActual.ANTIG"
-                  hide-details="auto"
-                  label="Antig."
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="4">
-                <v-text-field
-                  v-model="vencimiento"
-                  hide-details="auto"
-                  label="Vencimiento"
+                  label="hasta"
                   :rules="rules.mmyyyy"
                 >
                 </v-text-field>
               </v-col>
+            </v-row>
+            <v-row>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.TITULO"
+                  v-model="registroActual.APJUB_MIN"
                   hide-details="auto"
-                  label="Título"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 3)]"
+                  label="Ap. Jub. Mín"
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="registroActual.APJUB_MAX"
+                  hide-details="auto"
+                  label="Ap. Jub. Máx."
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="registroActual.APJUB_PORC_REP"
+                  hide-details="auto"
+                  label="Ap. Jub. %"
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
                 ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.DIFCAT"
+                  v-model="registroActual.CONTJUB_MAX"
                   hide-details="auto"
-                  label="Dif. Cat."
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
+                  label="Contr. Jub. Máx."
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
                 ></v-text-field>
               </v-col>
               <v-col cols="4">
-                <v-checkbox
-                  v-model="registroActual.AJUB"
-                  color="primary"
-                  label="Ap. Jub"
-                  hide-details
-                ></v-checkbox>
+                <v-text-field
+                  v-model="registroActual.CONTJUB_PORC"
+                  hide-details="auto"
+                  label="Contr. Jub. Porc"
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="registroActual.APOS_MIN"
+                  hide-details="auto"
+                  label="Ap. OS. Mín."
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="registroActual.APOS_MAX"
+                  hide-details="auto"
+                  label="Ap. Jub. Máx."
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="registroActual.CONTOS_MIN"
+                  hide-details="auto"
+                  label="Contr. OS. Mín."
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="registroActual.CONTOS_MAX"
+                  hide-details="auto"
+                  label="Contr. Jub. Máx."
+                  :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
+                ></v-text-field>
               </v-col>
             </v-row>
           </v-container>

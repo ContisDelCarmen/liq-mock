@@ -3,14 +3,17 @@ import { ref } from 'vue'
 import Confirmacion from './Confirmacion.vue'
 import { leerDatos, ejecutarSP } from './llamadaAPI'
 import botonTooltip from './botonTooltip.vue'
-import { getVto, getFechaDMY } from '@/utils/formatos'
-import NovAltasVista from './NovAltasVista.vue'
+import { getVto } from '@/utils/formatos'
+import ParametrosDDJJ_Vista from './ParametrosDDJJ_Vista.vue'
 import { utils, writeFileXLSX } from 'xlsx'
 import { agregaTitulosExcel } from '@/utils/reportes.js'
-import { getName, estadosNov } from '@/utils/tipos'
+
+const props = defineProps(['cerrar'])
+const cerrar = props.cerrar
 
 const listaHeaders = [
   { title: '', key: '' },
+  { title: 'ID', key: 'ID' },
   { title: 'Periodo', key: 'PERIODO' },
   { title: 'Hasta', key: 'PERIODO_HASTA' },
   { title: 'Ap. Jub. Min', key: 'APJUB_MIN' },
@@ -49,7 +52,7 @@ const alertTipo = ref(null)
 // manejadores de altas, bajas y modificaciones
 
 const itemMostrar = ref({
-  Periodo: null
+  Id: null
 })
 
 function handleModif(itemid) {
@@ -95,7 +98,7 @@ async function grabarSP(item, id) {
   const { valorError, valorSalida } = await ejecutarSP(url, item)
   if (valorError == 0) {
     await leerListaRegs()
-    alertMensaje.value = 'Se grabó la novedad Nº ' + valorSalida
+    alertMensaje.value = 'Se grabó el rango de parámetros con Id=' + valorSalida
     alertTipo.value = 'success'
     mostrarAlert.value = true
     return true
@@ -132,58 +135,42 @@ function handleDownload() {
 function exportFile() {
   const map1 = data.value.map((x) => {
     return [
-      x.IDREP,
-      x.ORDEN,
-      x.AFILIADO,
-      x.DNI,
-      x.CUIL,
-      x.APELLIDO,
-      x.NOMBRE,
-      x.SEXO,
-      x.TE,
-      x.CC,
-      x.CAT,
-      x.ANTIG,
-      getVto(x.VTO),
-      x.TITULO,
-      x.DIFCAT,
-      x.AJUB,
-      getFechaDMY(x.FECHAGRABACION)
+      x.ID,
+      getVto(x.PERIODO),
+      getVto(x.PERIODO_HASTA),
+      x.APJUB_MIN,
+      x.APJUB_MAX,
+      x.APJUB_PORC_REP,
+      x.CONTJUB_MIN,
+      x.CONTJUB_PORC,
+      x.APOS_MIN,
+      x.APOS_MAX,
+      x.APOS_PORC,
+      x.CONTOS_MIN,
+      x.CONTOS_MAX
     ]
   })
 
   const titulosTabla = [
-    'Rep',
-    'Orden',
-    'Afiliado',
-    'DNI',
-    'CUIL',
-    'Apellido',
-    'Nombre',
-    'Sexo',
-    'TE',
-    'Sit. Rev.',
-    'Cat',
-    'Antig.',
-    'Venc.',
-    'Título',
-    'Dif. cat.',
-    'Ap. Jub.',
-    'Fecha Grab.'
+    'Id',
+    'Período',
+    'Per. Hasta',
+    'Ap. Jub. Min.',
+    'Ap. Jub. Max.',
+    'Contr. Min.',
+    'Contr. Porc.',
+    'Ap. OS Mín.',
+    'Ap. OS Máx.',
+    'Contr. OS Mín.',
+    'Contr. OS Máx.'
   ]
   const filtros = ''
-  const tituloReporte = 'Detalle de Hoja Nº: ' + hojaEditar.ID
+  const tituloReporte = 'Parámetros para las Declaraciones Juradas 931 '
   agregaTitulosExcel(map1, tituloReporte, filtros, titulosTabla)
   const ws = utils.aoa_to_sheet(map1)
 
   ws['!cols'] = [
     { wch: 10 },
-    { wch: 10 },
-    { wch: 10 },
-    { wch: 10 },
-    { wch: 10 },
-    { wch: 20 },
-    { wch: 20 },
     { wch: 10 },
     { wch: 10 },
     { wch: 10 },
@@ -200,7 +187,7 @@ function exportFile() {
   utils.book_append_sheet(wb, ws, 'Data')
 
   /* export to XLSX */
-  writeFileXLSX(wb, 'DetalleHoja_' + `${hojaEditar.ID}.xlsx`, {
+  writeFileXLSX(wb, 'ParametrosDDJJ.xlsx', {
     compression: true
   })
 }
@@ -221,23 +208,18 @@ function exportFile() {
   <v-container>
     <v-row>
       <p>
-        <b>Hoja Nro:</b> {{ hojaEditar.ID }} - <b>Tipo:</b> {{ hojaEditar.TIPOHOJADESCRIPCION }}
+        <b>Parámetros de DDJJ 931</b>
       </p>
     </v-row>
   </v-container>
   <v-container>
     <v-container>
-      <v-btn
-        v-if="hojaEditar.ESTADOHOJAID != 4 && hojaEditar.ESTADOHOJAID != 6"
-        color="primary"
-        prepend-icon="mdi-plus"
-        elevation="3"
-        @click="handleModif(null)"
-        >Nuevo registro</v-btn
+      <v-btn color="primary" prepend-icon="mdi-plus" elevation="3" @click="handleModif(null)"
+        >Nuevo rango</v-btn
       >
       <v-btn color="primary" @click="handleDownload" :disabled="!data">Descargar</v-btn>
-      <v-btn color="primary" prepend-icon="mdi-close" elevation="3" @click="handleCerrarEdicion()"
-        >Volver</v-btn
+      <v-btn color="primary" prepend-icon="mdi-close" elevation="3" @click="cerrar()"
+        >Cerrar Parámetros</v-btn
       >
     </v-container>
     <div v-if="isPending">loading...</div>
@@ -265,38 +247,31 @@ function exportFile() {
           <tr class="pa-0 ma-0">
             <td class="text-center m-0 p-0 sticky">
               <botonTooltip
-                v-if="hojaEditar.ESTADOHOJAID != 4 && hojaEditar.ESTADOHOJAID != 6"
                 :icono="'mdi-pencil'"
                 :toolMsg="'Editar'"
                 :funcion="handleModif"
                 :itemid="item.ID"
               ></botonTooltip>
               <botonTooltip
-                v-if="hojaEditar.ESTADOHOJAID != 4 && hojaEditar.ESTADOHOJAID != 6"
                 :icono="'mdi-delete'"
                 :toolMsg="'Eliminar'"
                 :funcion="handleEliminar"
                 :itemid="item.ID"
               ></botonTooltip>
             </td>
-            <td class="text-right m-0 p-0">{{ item.IDREP }}</td>
-            <td class="text-right m-0 p-0">{{ item.ORDEN }}</td>
-            <td class="text-right m-0 p-0">{{ item.AFILIADO }}</td>
-            <td class="text-right m-0 p-0">{{ item.DNI }}</td>
-            <td class="text-right m-0 p-0">{{ item.CUIL }}</td>
-            <td class="text-right m-0 p-0">{{ item.APELLIDO }}</td>
-            <td class="text-right m-0 p-0">{{ item.NOMBRE }}</td>
-            <td class="text-right m-0 p-0">{{ item.SEXO }}</td>
-            <td class="text-center m-0 p-0">{{ item.TE }}</td>
-            <td class="text-center m-0 p-0">{{ item.CC }}</td>
-            <td class="text-center m-0 p-0">{{ item.CAT }}</td>
-            <td class="text-right m-0 p-0">{{ item.ANTIG }}</td>
-            <td class="text-center m-0 p-0">{{ getVto(item.VTO) }}</td>
-            <td class="text-right m-0 p-0">{{ item.TITULO }}</td>
-            <td class="text-right m-0 p-0">{{ item.DIFCAT }}</td>
-            <td class="text-center m-0 p-0">{{ item.AJUB ? 'SI' : 'NO' }}</td>
-            <td class="text-center m-0 p-0">{{ getFechaDMY(item.FECHAGRABACION) }}</td>
-            <td class="text-center m-0 p-0">{{ getName(estadosNov, item.ESTADOREGISTRO) }}</td>
+            <td class="text-right m-0 p-0">{{ item.ID }}</td>
+            <td class="text-right m-0 p-0">{{ getVto(item.PERIODO) }}</td>
+            <td class="text-right m-0 p-0">{{ getVto(item.PERIODO_HASTA) }}</td>
+            <td class="text-right m-0 p-0">{{ item.APJUB_MIN }}</td>
+            <td class="text-right m-0 p-0">{{ item.PAJUB_MAX }}</td>
+            <td class="text-right m-0 p-0">{{ item.APJUB_PORC_REP }}</td>
+            <td class="text-right m-0 p-0">{{ item.CONJUB_MAX }}</td>
+            <td class="text-right m-0 p-0">{{ item.CONTJUB_PORC }}</td>
+            <td class="text-right m-0 p-0">{{ item.APOS_MIN }}</td>
+            <td class="text-center m-0 p-0">{{ item.APOS_MAX }}</td>
+            <td class="text-center m-0 p-0">{{ item.APOS_PORC }}</td>
+            <td class="text-center m-0 p-0">{{ item.CONTOS_MIN }}</td>
+            <td class="text-right m-0 p-0">{{ item.CONTOS_MAX }}</td>
           </tr>
         </template>
       </v-data-table>
@@ -305,12 +280,11 @@ function exportFile() {
   </v-container>
 
   <v-dialog v-model="muestraRegistro" max-width="80%" persistent="">
-    <NovAltasVista
+    <ParametrosDDJJ_Vista
       :Registro="itemMostrar"
       :cerrar="cierraForm"
       :funcion="grabarSP"
-      :hojaId="hojaEditar.ID"
-    ></NovAltasVista>
+    ></ParametrosDDJJ_Vista>
   </v-dialog>
 
   <v-dialog v-model="muestraConfirmacion" max-width="80%" persistent="">
