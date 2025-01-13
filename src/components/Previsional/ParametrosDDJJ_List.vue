@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import Confirmacion from './Confirmacion.vue'
 import { leerDatos, ejecutarSP } from './llamadaAPI'
 import botonTooltip from './botonTooltip.vue'
-import { getVto } from '@/utils/formatos'
+import { getVto, financial } from '@/utils/formatos'
 import ParametrosDDJJ_Vista from './ParametrosDDJJ_Vista.vue'
 import { utils, writeFileXLSX } from 'xlsx'
 import { agregaTitulosExcel } from '@/utils/reportes.js'
@@ -15,16 +15,16 @@ const listaHeaders = [
   { title: '', key: '' },
   { title: 'ID', key: 'ID' },
   { title: 'Periodo', key: 'PERIODO' },
-  { title: 'Hasta', key: 'PERIODO_HASTA' },
-  { title: 'Ap. Jub. Min', key: 'APJUB_MIN' },
-  { title: 'Ap. Jub. Max.', key: 'APJUB_MAX' },
-  { title: '% Ap. Jub.', key: 'AP_JUB_PORC_REP' },
-  { title: 'Cont. Jub. Max.', key: 'CONJUB_MAX' },
-  { title: '% Cont. Jub.', key: 'CONTJUB_PORC' },
-  { title: 'Ap. OS Min.', key: 'APOS_MIN' },
-  { title: 'Ap. OS Max.', key: 'APOS_MAX' },
-  { title: 'Cont. OS Min.', key: 'CONTOS_MIN' },
-  { title: 'Cont. OS Max.', key: 'CONTOS_MAX' }
+  { title: 'Hasta', key: 'PERIODOHASTA' },
+  { title: 'Ap. Jub. Min', key: 'JUBMIN' },
+  { title: 'Ap. Jub. Max.', key: 'JUBMAX' },
+  { title: '% Ap. Jub.', key: 'PORCREP' },
+  { title: 'Cont. Jub. Max.', key: 'CONTJUBMAX' },
+  { title: '% Cont. Jub.', key: 'CONTJUBPORC' },
+  { title: 'Ap. OS Min.', key: 'APOSMIN' },
+  { title: 'Ap. OS Max.', key: 'APOSMAX' },
+  { title: 'Cont. OS Min.', key: 'CONTOSMIN' },
+  { title: 'Cont. OS Max.', key: 'CONTOSMAX' }
 ]
 
 // lectura de registros
@@ -36,7 +36,7 @@ const lecturaListaRegs = ref(true)
 
 async function leerListaRegs() {
   isPending.value = true
-  const { datos, operacionOk } = await leerDatos('view/novAltas')
+  const { datos, operacionOk } = await leerDatos('view/ddjjParam')
   data.value = datos
   lecturaListaRegs.value = operacionOk
   isPending.value = false
@@ -90,12 +90,16 @@ function cierraForm() {
 async function grabarSP(item, id) {
   let url = ''
   if (id == 0) {
-    url = 'sp/NovAltasIns'
+    url = 'sp/ddjjIns'
   } else {
-    url = 'sp/NovAltasUpd'
+    url = 'sp/ddjjUpd'
   }
-
-  const { valorError, valorSalida } = await ejecutarSP(url, item)
+  console.log('--- registtro a grabar')
+  console.log(item)
+  const { datos } = await ejecutarSP(url, item)
+  const valorError = datos.out.vError
+  const valorSalida = datos.out.vSALIDA
+  const errorMsg = datos.out.vErrorMsg
   if (valorError == 0) {
     await leerListaRegs()
     alertMensaje.value = 'Se grabó el rango de parámetros con Id=' + valorSalida
@@ -103,6 +107,7 @@ async function grabarSP(item, id) {
     mostrarAlert.value = true
     return true
   }
+  console.log('error de grabacion: ' + errorMsg)
 
   return false
 }
@@ -110,14 +115,16 @@ async function grabarSP(item, id) {
 async function eliminar(id) {
   muestraConfirmacion.value = false
   let item = {
-    vIDNOV: id
+    vID: id
   }
-  let url = 'sp/NovAltasDel'
+  let url = 'sp/ddjjDel'
 
-  const { valorError } = await ejecutarSP(url, item)
+  const { datos } = await ejecutarSP(url, item)
+  const valorError = datos.out.vError
+
   if (valorError == 0) {
     await leerListaRegs()
-    alertMensaje.value = 'Se eliminó la novedad Nº' + id
+    alertMensaje.value = 'Se eliminó el rango con ID: ' + id
     alertTipo.value = 'success'
     mostrarAlert.value = true
     return true
@@ -137,17 +144,16 @@ function exportFile() {
     return [
       x.ID,
       getVto(x.PERIODO),
-      getVto(x.PERIODO_HASTA),
-      x.APJUB_MIN,
-      x.APJUB_MAX,
-      x.APJUB_PORC_REP,
-      x.CONTJUB_MIN,
-      x.CONTJUB_PORC,
-      x.APOS_MIN,
-      x.APOS_MAX,
-      x.APOS_PORC,
-      x.CONTOS_MIN,
-      x.CONTOS_MAX
+      getVto(x.PERIODOHASTA),
+      x.JUBMIN,
+      x.JUBMAX,
+      x.PORCREP,
+      x.CONTJUBMAX,
+      x.CONTJUBPORC,
+      x.APOSMIN,
+      x.APOSMAX,
+      x.CONTOSMIN,
+      x.CONTOSMAX
     ]
   })
 
@@ -157,7 +163,8 @@ function exportFile() {
     'Per. Hasta',
     'Ap. Jub. Min.',
     'Ap. Jub. Max.',
-    'Contr. Min.',
+    'Ap. Jub. %',
+    'Contr. Máx.',
     'Contr. Porc.',
     'Ap. OS Mín.',
     'Ap. OS Máx.',
@@ -170,6 +177,7 @@ function exportFile() {
   const ws = utils.aoa_to_sheet(map1)
 
   ws['!cols'] = [
+    { wch: 10 },
     { wch: 10 },
     { wch: 10 },
     { wch: 10 },
@@ -261,17 +269,16 @@ function exportFile() {
             </td>
             <td class="text-right m-0 p-0">{{ item.ID }}</td>
             <td class="text-right m-0 p-0">{{ getVto(item.PERIODO) }}</td>
-            <td class="text-right m-0 p-0">{{ getVto(item.PERIODO_HASTA) }}</td>
-            <td class="text-right m-0 p-0">{{ item.APJUB_MIN }}</td>
-            <td class="text-right m-0 p-0">{{ item.PAJUB_MAX }}</td>
-            <td class="text-right m-0 p-0">{{ item.APJUB_PORC_REP }}</td>
-            <td class="text-right m-0 p-0">{{ item.CONJUB_MAX }}</td>
-            <td class="text-right m-0 p-0">{{ item.CONTJUB_PORC }}</td>
-            <td class="text-right m-0 p-0">{{ item.APOS_MIN }}</td>
-            <td class="text-center m-0 p-0">{{ item.APOS_MAX }}</td>
-            <td class="text-center m-0 p-0">{{ item.APOS_PORC }}</td>
-            <td class="text-center m-0 p-0">{{ item.CONTOS_MIN }}</td>
-            <td class="text-right m-0 p-0">{{ item.CONTOS_MAX }}</td>
+            <td class="text-right m-0 p-0">{{ getVto(item.PERIODOHASTA) }}</td>
+            <td class="text-right m-0 p-0">{{ financial(item.JUBMIN) }}</td>
+            <td class="text-right m-0 p-0">{{ financial(item.JUBMAX) }}</td>
+            <td class="text-right m-0 p-0">{{ financial(item.PORCREP) }}</td>
+            <td class="text-right m-0 p-0">{{ financial(item.CONTJUBMAX) }}</td>
+            <td class="text-right m-0 p-0">{{ financial(item.CONTJUBPORC) }}</td>
+            <td class="text-right m-0 p-0">{{ financial(item.APOSMIN) }}</td>
+            <td class="text-center m-0 p-0">{{ financial(item.APOSMAX) }}</td>
+            <td class="text-center m-0 p-0">{{ financial(item.CONTOSMIN) }}</td>
+            <td class="text-right m-0 p-0">{{ financial(item.CONTOSMAX) }}</td>
           </tr>
         </template>
       </v-data-table>

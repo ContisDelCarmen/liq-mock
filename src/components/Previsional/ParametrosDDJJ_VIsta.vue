@@ -14,20 +14,22 @@ const periodo = ref(getVtoActual())
 const periodo_hasta = ref(null)
 
 const registroVacio = ref({
-  APJUB_MIN: 0,
-  APJUB_MAX: 0,
-  APJUB_PORC_REP: 11,
-  CONTJUB_PORC: 10.17,
-  APOS_MIN: 0,
-  APOS_MAX: 0,
-  CONTOS_MIN: 0,
+  JUBMIN: 0,
+  JUBMAX: 0,
+  PORCREP: 11,
+  CONTJUBMAX: 0,
+  CONTJUBPORC: 10.17,
+  APOSMIN: 0,
+  APOSMAX: 0,
+  CONTOSMIN: 0,
+  CONTOSMAX: 0,
   ID: 0
 })
 
 if (registroOrigen) {
   registroActual.value = { ...registroOrigen }
   periodo.value = getVto(registroOrigen.PERIODO)
-  periodo_hasta.value = getVto(registroOrigen.VTO)
+  periodo_hasta.value = getVto(registroOrigen.PERIODOHASTA)
 } else {
   registroActual.value = registroVacio.value
 }
@@ -58,15 +60,15 @@ async function grabaRegistro() {
   let registroGrabar = {
     vPERIODO: getFechaToAPIFromMMYYYY(periodo.value),
     vPERIODO_HASTA: vto,
-    vAPJUB_MIN: registroActual.value.APJUB_MIN,
-    vAPJUB_MAX: registroActual.value.APJUB_MAX,
-    vAPJUB_PORC: registroActual.value.APJUB_PORC_REP,
-    vCONTJUB_MAX: registroActual.value.CONTJUB_MAX,
-    vCONTJUB_PORC: registroActual.value.CONTJUB_PORC,
-    vAPOS_MIN: registroActual.value.APOS_MIN,
-    vAPOS_MAX: registroActual.value.APOS_MAX,
-    vCONTOS_MIN: registroActual.value.CONTOS_MIN,
-    vCONTOS_MAX: registroActual.value.CONTOS_MAX
+    vAPJUB_MIN: registroActual.value.JUBMIN,
+    vAPJUB_MAX: registroActual.value.JUBMAX,
+    vAPJUB_PORC: registroActual.value.PORCREP,
+    vCONTJUB_MAX: registroActual.value.CONTJUBMAX,
+    vCONTJUB_PORC: registroActual.value.CONTJUBPORC,
+    vAPOS_MIN: registroActual.value.APOSMIN,
+    vAPOS_MAX: registroActual.value.APOSMAX,
+    vCONTOS_MIN: registroActual.value.CONTOSMIN,
+    vCONTOS_MAX: registroActual.value.CONTOSMAX
   }
   if (registroActual.value.ID !== 0) {
     registroGrabar = {
@@ -130,7 +132,7 @@ function validarRegistro() {
             <v-row>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.APJUB_MIN"
+                  v-model="registroActual.JUBMIN"
                   hide-details="auto"
                   label="Ap. Jub. Mín"
                   :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
@@ -138,7 +140,7 @@ function validarRegistro() {
               </v-col>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.APJUB_MAX"
+                  v-model="registroActual.JUBMAX"
                   hide-details="auto"
                   label="Ap. Jub. Máx."
                   :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
@@ -146,7 +148,7 @@ function validarRegistro() {
               </v-col>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.APJUB_PORC_REP"
+                  v-model="registroActual.PORCREP"
                   hide-details="auto"
                   label="Ap. Jub. %"
                   :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
@@ -156,7 +158,7 @@ function validarRegistro() {
             <v-row>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.CONTJUB_MAX"
+                  v-model="registroActual.CONTJUBMAX"
                   hide-details="auto"
                   label="Contr. Jub. Máx."
                   :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
@@ -164,7 +166,7 @@ function validarRegistro() {
               </v-col>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.CONTJUB_PORC"
+                  v-model="registroActual.CONTJUBPORC"
                   hide-details="auto"
                   label="Contr. Jub. Porc"
                   :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
@@ -174,7 +176,7 @@ function validarRegistro() {
             <v-row>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.APOS_MIN"
+                  v-model="registroActual.APOSMIN"
                   hide-details="auto"
                   label="Ap. OS. Mín."
                   :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
@@ -182,7 +184,7 @@ function validarRegistro() {
               </v-col>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.APOS_MAX"
+                  v-model="registroActual.APOSMAX"
                   hide-details="auto"
                   label="Ap. Jub. Máx."
                   :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
@@ -192,7 +194,7 @@ function validarRegistro() {
             <v-row>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.CONTOS_MIN"
+                  v-model="registroActual.CONTOSMIN"
                   hide-details="auto"
                   label="Contr. OS. Mín."
                   :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
@@ -200,7 +202,7 @@ function validarRegistro() {
               </v-col>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.CONTOS_MAX"
+                  v-model="registroActual.CONTOSMAX"
                   hide-details="auto"
                   label="Contr. Jub. Máx."
                   :rules="[...rules.numDecimal, (val) => rules.longitudMin(val, 1)]"
