@@ -4,7 +4,7 @@ import Confirmacion from './Confirmacion.vue'
 import { leerDatos, ejecutarSP } from './llamadaAPI'
 import botonTooltip from './botonTooltip.vue'
 import { getVto, financial } from '@/utils/formatos'
-import ParametrosDDJJ_Vista from './ParametrosDDJJ_Vista2.vue'
+import ParametrosDDJJ_Vista from './ParametrosDDJJ_Vista.vue'
 import { utils, writeFileXLSX } from 'xlsx'
 import { agregaTitulosExcel } from '@/utils/reportes.js'
 
