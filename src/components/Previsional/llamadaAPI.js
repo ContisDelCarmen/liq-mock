@@ -111,6 +111,7 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   let valorError = -1
   let valorSalida = -1
   let errorMsg = ''
+  let datos = null
   //console.log('dirección: ', urlAPI + url)
   //console.log('datos:', JSON.stringify(data))
 
@@ -131,7 +132,7 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
     estado = response.status
     operacionOk = response.ok
     if (response.ok) {
-      let datos = await response.json()
+      datos = await response.json()
       valorError = datos.out.ValorError
       valorSalida = datos.out.ValorSalida
       errorMsg = datos.out.vErrorMsg
@@ -145,7 +146,7 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
     errmsg = 'Error en la Red'
   }
 
-  return { estado, operacionOk, errmsg, valorError, valorSalida, errorMsg }
+  return { estado, operacionOk, errmsg, valorError, valorSalida, errorMsg, datos }
 }
 
 export async function descargaTXT(url) {
