@@ -19,7 +19,7 @@ export const useUserStore = defineStore('userStore', {
     getters: {
         isRegistred: (state) => !!state.user,
         isAuthenticated: (state) => !!state.auth,
-        isAdmin:(state) => !!state.user && state.user.ROL===4 ,
+        isAdmin:(state) => !!state.user && state.user.ROL===5 ,
         isValid: (state) => !!state.pers,
         userName: (state) => state.user?.name || '',
         checkPassword(state) {
@@ -174,8 +174,8 @@ export const useUserStore = defineStore('userStore', {
             this.error = null
             this.success = false
             try {
-                console.log(`${apiBase.value}/api/view/frontMenuRol?IdRol=${this.user.ROL}`)
-                const response = await fetch(`${apiBase.value}/api/view/frontMenuRol?IdRol=${this.user.ROL}`) // Cambia la URL a la de tu API
+                console.log(`${apiBase.value}/api/view/frontMenuRol?IdRol=${this.user.ROL}&sort={"IdMenu":"asc"}`)
+                const response = await fetch(`${apiBase.value}/api/view/frontMenuRol?IdRol=${this.user.ROL}&sort={"IdMenu":"asc"}`) // Cambia la URL a la de tu API
                 if (!response.ok) {
                     throw new Error('Error fetching user')
                 }
