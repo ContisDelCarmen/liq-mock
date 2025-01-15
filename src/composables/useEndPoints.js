@@ -8,8 +8,7 @@ const endpoints = {
   },
   prod: {
     boletas: 'https://api-boletas.deno.dev',
-    //base: 'https://midliq-api-yr8qdhkr86sq.deno.dev',
-    base: 'https://midliq-api-56e5e9zn36d8.deno.dev',
+    base: 'https://midliq-api-yr8qdhkr86sq.deno.dev',
     sp: 'https://josrferreyr-deno-api-su-79.deno.dev'
   }
 }
