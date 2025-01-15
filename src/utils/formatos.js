@@ -1,5 +1,5 @@
 export function financial(x) {
-  return Number.parseFloat(x).toFixed(2)
+  return x !== null ? Number.parseFloat(x).toFixed(2) : null
 }
 
 export const getVto = (vto) => {
