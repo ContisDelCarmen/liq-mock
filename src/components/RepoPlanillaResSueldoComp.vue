@@ -29,6 +29,7 @@ const totImporte = computed(() => {
   var totDesVarios = 0
   var totNeto = 0
   var totLey = 0
+  var totDescJubAdic = 0
   if (data.value) {
     data.value.forEach((x) => {
       totHabCA += x.HABCONAP
@@ -41,6 +42,7 @@ const totImporte = computed(() => {
       totDesVarios += x.DESCVARIOS
       totNeto += x.NETO
       totLey += x.LEY7991
+      totDescJubAdic += x.DESCJUBADIC
     })
   }
 
@@ -54,7 +56,8 @@ const totImporte = computed(() => {
     totDescLey,
     totDesVarios,
     totNeto,
-    totLey
+    totLey,
+    totDescJubAdic
   }
 })
 
@@ -83,7 +86,7 @@ const headers = [
   { title: 'Mes Liq.', key: 'MESLIQ', sortable: false },
   { title: 'Categoría', key: 'CAT', sortable: false },
   { title: 'Hab. c/Ap.', key: 'HABCONAP', sortable: false },
-  { title: 'Inasist. Rem.', key: 'INASISTREM', sortable: false },
+  { title: 'Inasist. Rem./Retiro', key: 'INASISTREM', sortable: false },
   { title: 'Hab. c/Ap. neto', key: 'HABCONAP2', sortable: false },
   { title: 'Hab. S/Ap.', key: 'HABSINAP', sortable: false },
   { title: 'Tot. Hab.', key: 'TOTALHAB', sortable: false },
@@ -91,7 +94,8 @@ const headers = [
   { title: 'Desc. Ley', key: 'DESCLEY', sortable: false },
   { title: 'Desc. Varios', key: 'DESCVARIOS', sortable: false },
   { title: 'Neto', key: 'NETO', sortable: false },
-  { title: 'Ley 7991', key: 'LEY7991', sortable: false }
+  { title: 'Ley 7991', key: 'LEY7991', sortable: false },
+  { title: 'Desc Jub Adic', key: 'DESCJUBADIC', sortable: false }
 ]
 
 function handleDownload() {
@@ -117,7 +121,8 @@ function exportFile() {
       x.DESCLEY,
       x.DESCVARIOS,
       x.NETO,
-      x.LEY7991
+      x.LEY7991,
+      x.DESCJUBADIC
     ]
   })
 
@@ -129,7 +134,7 @@ function exportFile() {
     'Mes Liq.',
     'categoría',
     'Hab. con Ap.',
-    'Inasist. Rem.',
+    'Inasist. Rem. / Retiro',
     'Hab. con Ap. neto',
     'Hab. sin Ap.',
     'Tot. Hab.',
@@ -137,7 +142,8 @@ function exportFile() {
     'Desc. de Ley',
     'Desc. varios',
     'Neto',
-    'Ley 7991'
+    'Ley 7991',
+    'Desc Jub Adic'
   ]
   const totalesTabla = [
     null,
@@ -155,7 +161,8 @@ function exportFile() {
     totImporte.value.totDescLey,
     totImporte.value.totDesVarios,
     totImporte.value.totNeto,
-    totImporte.value.totLey
+    totImporte.value.totLey,
+    totImporte.value.totDescJubAdic
   ]
   map1.push(totalesTabla)
   const filtros = store.liqString
@@ -170,6 +177,7 @@ function exportFile() {
     { wch: 35 },
     { wch: 10 },
     { wch: 10 },
+    { wch: 15 },
     { wch: 15 },
     { wch: 15 },
     { wch: 15 },
@@ -221,6 +229,7 @@ function exportFile() {
             <td class="text-right">{{ financial(item.DESCVARIOS) }}</td>
             <td class="text-right">{{ financial(item.NETO) }}</td>
             <td class="text-right">{{ financial(item.LEY7991) }}</td>
+            <td class="text-right">{{ financial(item.DESCJUBADIC) }}</td>
           </tr>
         </template>
         <template v-slot:body.append>
@@ -241,6 +250,7 @@ function exportFile() {
             <th class="text-right">{{ financial(totImporte.totDesVarios) }}</th>
             <th class="text-right">{{ financial(totImporte.totNeto) }}</th>
             <th class="text-right">{{ financial(totImporte.totLey) }}</th>
+            <th class="text-right">{{ financial(totImporte.totDescJubAdic) }}</th>
           </tr>
         </template>
       </v-data-table>
