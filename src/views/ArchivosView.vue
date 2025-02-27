@@ -1,6 +1,6 @@
 <script setup>
-import LiqBoletas from '@/components/LiqBoletas.vue'
 import LiqInputPanel from '@/components/LiqInputPanel.vue'
+import ArchIPSST from '@/components/ArchIPSST.vue'
 </script>
 
 <template>
@@ -12,7 +12,7 @@ import LiqInputPanel from '@/components/LiqInputPanel.vue'
       <LiqInputPanel></LiqInputPanel>
     </v-row>
     <v-row>
-      
+      <ArchIPSST></ArchIPSST>
     </v-row>
   </v-container>
 </template>
