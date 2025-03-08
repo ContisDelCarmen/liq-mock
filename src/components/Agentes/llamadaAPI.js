@@ -4,10 +4,11 @@ import { useEndPoints } from '@/composables/useEndPoints'
 
 const { apiBase } = useEndPoints()
 
-//const urlAPI = 'http://www.serverburru2.duckdns.org:3005/api/'
+const urlAPI = 'http://www.serverburru2.duckdns.org:3005/api/'
+//const urlAPI = apiBase.value + '/api/'
 
-const urlAPI = apiBase.value + '/api/'
-const urlAPI_sp = 'https://josrferreyr-deno-api-su-79.deno.dev/'
+//const urlAPI_sp = 'https://josrferreyr-deno-api-su-79.deno.dev/'
+const urlAPI_sp = 'https://josrferreyr-deno-api-su-79--desarrollo.deno.dev'
 
 export async function grabarRegistro(url = '', data = {}, metodo = 'POST') {
   let estado = 0
@@ -112,7 +113,7 @@ export async function ejecutarSP(url = '', data = {}, metodo = 'POST') {
   let valorError = -1
   let valorSalida = 0
   let errorMsg = ''
-  //console.log('dirección: ', urlAPI + url)
+  console.log('dirección: ', urlAPI_sp + url)
   //console.log('datos:', JSON.stringify(data))
 
   try {

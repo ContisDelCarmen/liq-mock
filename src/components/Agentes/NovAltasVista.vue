@@ -1,56 +1,42 @@
 <script setup>
 import { ref } from 'vue'
-import { getVto, getVtoActual, getFechaToAPIFromMMYYYY } from '@/utils/formatos'
+import { getFechaToAPIFromMMYYYY } from '@/utils/formatos'
 import { rules } from '@/utils/reglasValidacion'
-import { sexos, getObjetList } from '@/utils/tipos'
+import { tipoEscolaridad, tipoRelacionFamiliar, getObjetList } from '@/utils/tipos'
 
-const props = defineProps(['Registro', 'cerrar', 'funcion', 'hojaId'])
+const props = defineProps(['Registro', 'cerrar', 'funcion', 'personaId'])
 let registroOrigen = props.Registro
-let hojaId = props.hojaId
+let personaId = props.personaId
 let registroActual = ref({})
 
 const form = ref(null)
 const formOK = ref(false)
 
-const vencimiento = ref(getVtoActual())
-const periodo = ref(getVtoActual())
+const fechaNacimiento = ref(null)
 
-const sexoSelected = ref(sexos[0])
+const escolaridadSelected = ref(tipoEscolaridad[0])
+const relacionFamiliarSelected = ref(tipoRelacionFamiliar[0])
 
 const registroVacio = ref({
-  IDREP: 470,
-  ORDEN: 0,
-  AFILIADO: 0,
-  DNI: 0,
-  CUIL: 0,
-  APELLIDO: '',
-  NOMBRE: '',
-  SEXO: '',
-  TE: 0,
-  CC: 0,
-  CAT: 0,
-  ANTIG: 0,
-  VTO: vencimiento,
-  TITULO: 0,
-  DIFCAT: 0,
-  AJUB: false,
-  PERIODO: periodo,
-  FECHAGRABACION: null,
-  ESTADOREGISTRO: 1,
-  HOJAID: hojaId,
+  DOCUMENTO: 0,
+  APELLIDOYNOMBRE: '',
+  FECHANACIMIENTO: '',
+  GRADO: 0,
+  DISCAPACITADO: false,
+  PERSONAID: personaId,
   ID: 0
 })
 
 if (registroOrigen) {
-  console.log(registroOrigen.APJUB)
   registroActual.value = { ...registroOrigen }
-  registroActual.value.AJUB = registroOrigen.APJUB == 1
-  vencimiento.value = getVto(registroOrigen.VTO)
-  periodo.value = getVto(registroOrigen.PERIODO)
-  sexoSelected.value = getObjetList(sexos, registroOrigen.SEXO)
+  registroActual.value.DISCAPACITADO = registroOrigen.DISCAPACITADO == 1
+  escolaridadSelected.value = getObjetList(tipoEscolaridad, registroOrigen.TIPOESCOLARIDADID)
+  relacionFamiliarSelected.value = getObjetList(tipoRelacionFamiliar, registroOrigen.TIPORELACIONID)
 } else {
   registroActual.value = registroVacio.value
 }
+
+console.log(registroActual.value)
 
 const mostrarAlert = ref(false)
 
@@ -70,43 +56,34 @@ async function grabaRegistro() {
     mostrarAlert.value = true
     return
   }
-  let vto = ''
-  if (vencimiento.value != null) {
-    if (vencimiento.value.length > 0) vto = getFechaToAPIFromMMYYYY(vencimiento.value)
-  }
+
+  let fecNacimiento = ''
+  if (fechaNacimiento.value !== null)
+    if (fechaNacimiento.value.lenth > 0)
+      fecNacimiento = getFechaToAPIFromMMYYYY(fechaNacimiento.value)
 
   let registroGrabar = {
-    vREP: registroActual.value.IDREP,
-    vORD: registroActual.value.ORDEN,
-    vAFI: registroActual.value.AFILIADO,
-    vDNI: registroActual.value.DNI,
-    vCUIL: registroActual.value.CUIL,
-    vAPE: registroActual.value.APELLIDO,
-    vNOM: registroActual.value.NOMBRE,
-    vSEXO: sexoSelected.value.value,
-    vTE: registroActual.value.TE,
-    vCC: registroActual.value.CC,
-    vCAT: registroActual.value.CAT,
-    vANTIG: registroActual.value.ANTIG,
-    vVTO: vto,
-    vTITULO: registroActual.value.TITULO,
-    vDIF_CAT: registroActual.value.DIFCAT,
-    vAJUB: registroActual.value.AJUB ? 1 : 0,
-    vPERIODO: getFechaToAPIFromMMYYYY(periodo.value)
+    vIDPERS: registroActual.value.PERSONAID,
+    vDNI: registroActual.value.DOCUMENTO,
+    vAPEYNOM: registroActual.value.APELLIDOYNOMBRE,
+    vTABTIPOREL: relacionFamiliarSelected.value.value,
+    vFECHANAC: fecNacimiento,
+    vTABTIPOESC: escolaridadSelected.value.value,
+    vGRADO: registroActual.value.GRADO,
+    vDISCAPACITADO: registroActual.value.DISCAPACITADO ? 1 : 0
   }
   if (registroActual.value.ID !== 0) {
     registroGrabar = {
       vIDNOV: registroActual.value.ID,
       ...registroGrabar
     }
-  } else {
-    registroGrabar = {
-      ...registroGrabar,
-      vIDHOJANOV: hojaId
-    }
   }
+
+  console.log('se va a grabar el siguiente registro')
   console.log(registroGrabar)
   let grabarOk = await props.funcion(registroGrabar, registroActual.value.ID)
+
+  console.log(grabarOk)
 
   if (grabarOk) {
     props.cerrar()
@@ -125,8 +102,10 @@ function validarRegistro() {
   <v-container>
     <v-card>
       <v-form ref="form" v-model="formOK">
-        <v-card-title>Novedades de Altas</v-card-title>
-        <v-card-subtitle>Agregar en Hoja Nº {{ hojaId }}</v-card-subtitle>
+        <v-card-title>Carga Familiar</v-card-title>
+        <v-card-subtitle>
+          {{ registroActual.ID == 0 ? 'Agregar ' : 'Modificar' }}
+        </v-card-subtitle>
         <v-alert
           v-model="mostrarAlert"
           border="start"
@@ -142,155 +121,73 @@ function validarRegistro() {
             <v-row>
               <v-col cols="4">
                 <v-text-field
-                  v-model="registroActual.IDREP"
+                  v-model="registroActual.DOCUMENTO"
                   hide-details="auto"
-                  label="Repartición"
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 7)]"
+                  label="DNI"
+                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 8, 9)]"
                 ></v-text-field>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="8">
                 <v-text-field
-                  v-model="registroActual.ORDEN"
-                  hide-details="auto"
-                  label="Nro. Boleta"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 7)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="4">
-                <v-text-field
-                  v-model="registroActual.AFILIADO"
-                  hide-details="auto"
-                  label="Afiliado"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 7)]"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="registroActual.APELLIDO"
+                  v-model="registroActual.APELLIDOYNOMBRE"
                   hide-details="auto"
                   label="Apellido"
                   lazy-validation
                   :rules="[(val) => rules.longitudEntre(val, 3, 100)]"
                 ></v-text-field>
               </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="registroActual.NOMBRE"
-                  hide-details="auto"
-                  label="Nombre"
-                  lazy-validation
-                  :rules="[(val) => rules.longitudEntre(val, 3, 100)]"
-                ></v-text-field>
-              </v-col>
             </v-row>
             <v-row>
               <v-col cols="6">
-                <v-text-field
-                  v-model="registroActual.DNI"
-                  hide-details="auto"
-                  label="DNI"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 9)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="registroActual.CUIL"
-                  hide-details="auto"
-                  label="CUIL"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 11, 11)]"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="3">
                 <v-select
-                  label="Sexo"
-                  :items="sexos"
+                  label="Relación"
+                  :items="tipoRelacionFamiliar"
                   item-title="name"
                   item-value="value"
-                  v-model="sexoSelected"
+                  v-model="relacionFamiliarSelected"
                   return-object
                 >
                 </v-select>
               </v-col>
-              <v-col cols="3">
+
+              <v-col cols="6">
                 <v-text-field
-                  v-model="registroActual.TE"
+                  v-model="registroActual.FECHANACIMIENTO"
                   hide-details="auto"
-                  label="Tipo Emp."
+                  label="Fec. Nac."
                   lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="registroActual.CC"
-                  hide-details="auto"
-                  label="Sit. Rev."
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="registroActual.CAT"
-                  hide-details="auto"
-                  label="categoría"
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
+                  :rules="rules.ddmmyyyy"
                 ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="4">
-                <v-text-field
-                  v-model="registroActual.ANTIG"
-                  hide-details="auto"
-                  label="Antig."
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="4">
-                <v-text-field
-                  v-model="vencimiento"
-                  hide-details="auto"
-                  label="Vencimiento"
-                  :rules="rules.mmyyyy"
+              <v-col cols="6">
+                <v-select
+                  label="Escolaridad"
+                  :items="tipoEscolaridad"
+                  item-title="name"
+                  item-value="value"
+                  v-model="escolaridadSelected"
+                  return-object
                 >
-                </v-text-field>
+                </v-select>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="6">
                 <v-text-field
-                  v-model="registroActual.TITULO"
+                  v-model="registroActual.GRADO"
                   hide-details="auto"
-                  label="Título"
+                  label="Grado"
                   lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 3)]"
+                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 1)]"
                 ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="4">
-                <v-text-field
-                  v-model="registroActual.DIFCAT"
-                  hide-details="auto"
-                  label="Dif. Cat."
-                  lazy-validation
-                  :rules="[...rules.number, (val) => rules.longitudEntre(val, 1, 2)]"
-                ></v-text-field>
-              </v-col>
               <v-col cols="4">
                 <v-checkbox
-                  v-model="registroActual.AJUB"
+                  v-model="registroActual.DISCAPACITADO"
                   color="primary"
-                  label="Ap. Jub"
+                  label="Discapacitado"
                   hide-details
                 ></v-checkbox>
               </v-col>

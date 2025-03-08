@@ -7,7 +7,6 @@ import { getFechaDMY } from '@/utils/formatos'
 import NovAltasVista from './NovAltasVista.vue'
 import { utils, writeFileXLSX } from 'xlsx'
 import { agregaTitulosExcel } from '@/utils/reportes.js'
-import { getName, estadosNov } from '@/utils/tipos'
 
 const props = defineProps(['setHojaEdicion', 'personaEditar'])
 // prueba de commir en github
@@ -20,7 +19,7 @@ function handleCerrarEdicion() {
 
 const listaHeaders = [
   { title: '', key: '' },
-  { title: 'DNI', key: 'DNI' },
+  { title: 'DNI', key: 'DOCUMENTO' },
   { title: 'Ape. y Nom.', key: 'APELLIDOYNOMBRE' },
   { title: 'Relacion', key: 'TIPORELACIONDESCRIPCION' },
   { title: 'Fec. Nac.', key: 'FECHANACIMIENTO' },
@@ -94,9 +93,9 @@ function cierraForm() {
 async function grabarSP(item, id) {
   let url = ''
   if (id == 0) {
-    url = 'sp/NovAltasIns'
+    url = 'sp/CargaFamIns'
   } else {
-    url = 'sp/NovAltasUpd'
+    url = 'sp/CargaFamUpd'
   }
 
   const { valorError, valorSalida } = await ejecutarSP(url, item)
@@ -116,7 +115,7 @@ async function eliminar(id) {
   let item = {
     vIDNOV: id
   }
-  let url = 'sp/NovAltasDel'
+  let url = 'sp/CargaFamDel'
 
   const { valorError } = await ejecutarSP(url, item)
   if (valorError == 0) {
@@ -139,7 +138,7 @@ function handleDownload() {
 function exportFile() {
   const map1 = data.value.map((x) => {
     return [
-      x.DNI,
+      x.DOCUMENTO,
       x.APELLIDOYNOMBRE,
       x.TIPORELACIONDESCRIPCION,
       getFechaDMY(x.FECHANACIMIENTO),
@@ -198,13 +197,13 @@ function exportFile() {
 <template>
   <v-container>
     <v-row>
-      <p><b>Persona:</b> {{ personaEditar.DNI }} - {{ personaEditar.APELLIDOYNOMBRE }}</p>
+      <p><b>Carga Familiar de:</b> {{ personaEditar.DNI }} - {{ personaEditar.APELLIDOYNOMBRE }}</p>
     </v-row>
   </v-container>
   <v-container>
     <v-container>
       <v-btn color="primary" prepend-icon="mdi-plus" elevation="3" @click="handleModif(null)"
-        >Nuevo registro</v-btn
+        >Agregar</v-btn
       >
       <v-btn color="primary" @click="handleDownload" :disabled="!data">Descargar</v-btn>
       <v-btn color="primary" prepend-icon="mdi-close" elevation="3" @click="handleCerrarEdicion()"
@@ -248,13 +247,13 @@ function exportFile() {
                 :itemid="item.ID"
               ></botonTooltip>
             </td>
-            <td class="text-right m-0 p-0">{{ item.DNI }}</td>
-            <td class="text-right m-0 p-0">{{ item.APELLIDOYNOMBRE }}</td>
-            <td class="text-right m-0 p-0">{{ item.TIPORELACIONDESCRIPCION }}</td>
-            <td class="text-right m-0 p-0">{{ item.FECHANACIMIENTO }}</td>
-            <td class="text-right m-0 p-0">{{ item.TIPOESCOLARIDADDESCRIPCION }}</td>
-            <td class="text-right m-0 p-0">{{ item.GRADO }}</td>
-            <td class="text-right m-0 p-0">{{ item.DISCAPACITADO }}</td>
+            <td class="text-right m-0 p-0">{{ item.DOCUMENTO }}</td>
+            <td class="text-left m-0 p-0">{{ item.APELLIDOYNOMBRE }}</td>
+            <td class="text-left m-0 p-0">{{ item.TIPORELACIONDESCRIPCION }}</td>
+            <td class="text-center m-0 p-0">{{ getFechaDMY(item.FECHANACIMIENTO) }}</td>
+            <td class="text-left m-0 p-0">{{ item.TIPOESCOLARIDADDESCRIPCION }}</td>
+            <td class="text-center m-0 p-0">{{ item.GRADO }}</td>
+            <td class="text-center m-0 p-0">{{ item.DISCAPACITADO === 1 ? 'SI' : 'NO' }}</td>
           </tr>
         </template>
       </v-data-table>
@@ -267,7 +266,7 @@ function exportFile() {
       :Registro="itemMostrar"
       :cerrar="cierraForm"
       :funcion="grabarSP"
-      :hojaId="hojaEditar.ID"
+      :personaId="personaEditar.ID"
     ></NovAltasVista>
   </v-dialog>
 
