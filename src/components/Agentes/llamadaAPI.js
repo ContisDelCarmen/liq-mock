@@ -86,7 +86,6 @@ export async function leerDatos(url) {
   let operacionOk = false
   let errmsg = ''
   let datos = null
-  console.log(urlAPI + url)
   let response = null
   try {
     response = await fetch(urlAPI + url)

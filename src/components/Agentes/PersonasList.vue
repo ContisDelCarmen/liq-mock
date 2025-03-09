@@ -5,6 +5,8 @@ import { leerDatos } from './llamadaAPI'
 import botonTooltip from './botonTooltip.vue'
 import { getFechaDMY } from '@/utils/formatos'
 
+const props = defineProps(['setPersonaEdicion'])
+
 const hojasHeaders = [
   { title: '', key: 'ACCIONES' },
   { title: 'DNI', key: 'DOCUMENTO' },
@@ -44,6 +46,11 @@ async function leerRegistros(filtro = null) {
   isPending.value = false
 }
 
+function editarCargaFamiliar(itemid) {
+  let item = data.value.find((e) => e.PERSONAID == itemid)
+  props.setPersonaEdicion(item, 1)
+}
+
 leerRegistros()
 </script>
 
@@ -77,8 +84,8 @@ leerRegistros()
             <botonTooltip
               :icono="'mdi-list-box-outline'"
               :toolMsg="'Familiares'"
-              :funcion="handleEditarRegistros"
-              :itemid="item.ID"
+              :funcion="editarCargaFamiliar"
+              :itemid="item.PERSONAID"
             ></botonTooltip>
           </td>
 

@@ -8,13 +8,13 @@ import NovAltasVista from './NovAltasVista.vue'
 import { utils, writeFileXLSX } from 'xlsx'
 import { agregaTitulosExcel } from '@/utils/reportes.js'
 
-const props = defineProps(['setHojaEdicion', 'personaEditar'])
+const props = defineProps(['setPersonaEdicion', 'personaEditar'])
 // prueba de commir en github
 const personaEditar = props.personaEditar
 
 // cerrar editar registros de Hoja
 function handleCerrarEdicion() {
-  props.setHojaEdicion(null)
+  props.setPersonaEdicion(null, 0)
 }
 
 const listaHeaders = [
@@ -38,7 +38,9 @@ const lecturaListaRegs = ref(true)
 async function leerListaRegs() {
   isPending.value = true
   //const { datos, operacionOk } = await leerDatos('view/novAltas?HojaId=' + hojaEditar.ID)
-  const { datos, operacionOk } = await leerDatos('cargaFamiliar?PersonaId=' + personaEditar.ID)
+  const { datos, operacionOk } = await leerDatos(
+    'cargaFamiliar?PersonaId=' + personaEditar.PERSONAID
+  )
   data.value = datos
   lecturaListaRegs.value = operacionOk
   isPending.value = false
@@ -127,6 +129,7 @@ async function eliminar(id) {
   }
   return false
 }
+
 // -------------------------------------------------
 // funciones de exportación a archivo excel
 
@@ -196,11 +199,6 @@ function exportFile() {
 
 <template>
   <v-container>
-    <v-row>
-      <p><b>Carga Familiar de:</b> {{ personaEditar.DNI }} - {{ personaEditar.APELLIDOYNOMBRE }}</p>
-    </v-row>
-  </v-container>
-  <v-container>
     <v-container>
       <v-btn color="primary" prepend-icon="mdi-plus" elevation="3" @click="handleModif(null)"
         >Agregar</v-btn
@@ -266,7 +264,7 @@ function exportFile() {
       :Registro="itemMostrar"
       :cerrar="cierraForm"
       :funcion="grabarSP"
-      :personaId="personaEditar.ID"
+      :personaId="personaEditar.PERSONAID"
     ></NovAltasVista>
   </v-dialog>
 

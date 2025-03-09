@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { getFechaToAPIFromMMYYYY } from '@/utils/formatos'
+import { getFechaToAPIFromMMYYYY, getFechaDMY } from '@/utils/formatos'
 import { rules } from '@/utils/reglasValidacion'
 import { tipoEscolaridad, tipoRelacionFamiliar, getObjetList } from '@/utils/tipos'
 
@@ -30,13 +30,12 @@ const registroVacio = ref({
 if (registroOrigen) {
   registroActual.value = { ...registroOrigen }
   registroActual.value.DISCAPACITADO = registroOrigen.DISCAPACITADO == 1
+  registroActual.value.FECHANACIMIENTO = getFechaDMY(registroActual.value.FECHANACIMIENTO)
   escolaridadSelected.value = getObjetList(tipoEscolaridad, registroOrigen.TIPOESCOLARIDADID)
   relacionFamiliarSelected.value = getObjetList(tipoRelacionFamiliar, registroOrigen.TIPORELACIONID)
 } else {
   registroActual.value = registroVacio.value
 }
-
-console.log(registroActual.value)
 
 const mostrarAlert = ref(false)
 

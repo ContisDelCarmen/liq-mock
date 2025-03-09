@@ -148,38 +148,38 @@ export const sexos = [
 export const tipoRelacionFamiliar = [
   {
     name: 'ESPOSO/A',
-    value: '1'
+    value: 1
   },
   {
     name: 'HIJO/A',
-    value: '2'
+    value: 2
   }
 ]
 
 export const tipoEscolaridad = [
   {
     name: 'NO ESTUDIA',
-    value: '0'
+    value: 0
   },
   {
     name: 'JARDIN MENOR A 4 AÑOS',
-    value: '1'
+    value: 1
   },
   {
     name: 'JARDIN',
-    value: '2'
+    value: 2
   },
   {
     name: 'ESCOLARIDAD PRIMARIA',
-    value: '3'
+    value: 3
   },
   {
     name: 'ESCOLARIDAD SECUNDARIA',
-    value: '4'
+    value: 4
   },
   {
     name: 'ESTUDIOS TERCIARIOS/SUPERIOR',
-    value: '5'
+    value: 5
   }
 ]
 
