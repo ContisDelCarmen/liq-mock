@@ -18,7 +18,44 @@ function printData() {
   }
 
   console.log(largeString )
-  downloadTxt(largeString,data.value[0].NOMBREARCHIVO)
+  //downloadTxt(largeString,data.value[0].NOMBREARCHIVO)
+  downloadIpsst()
+}
+
+const getTxtFromAPI = async (url) => {
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      // Asegúrate de que este encabezado sea compatible con la API
+      'Content-Type': 'text/plain'
+    }
+  })
+  if (!response.ok) {
+    return null
+  }
+  const datos = await response.blob()
+  const urlSalida = window.URL.createObjectURL(datos)
+  return urlSalida
+}
+
+async function downloadIpsst() {
+
+  const url = `${apiBase.value}/api/txt/archivoIPSST?${store.filterString}`
+
+  const urlDescarga = await getTxtFromAPI(url)
+
+  if (urlDescarga == null) {
+   
+    return
+  }
+
+  const a = document.createElement('a')
+  a.href = urlDescarga
+  a.download = data.value[0].NOMBREARCHIVO // Nombre con el que se descargará el archivo
+  document.body.appendChild(a)
+  a.click() // Simula el clic para iniciar la descarga
+  a.remove() // Elimina el enlace del DOM
+  window.URL.revokeObjectURL(urlDescarga) // Limpia la URL creada
 }
 
 const downloadTxt = (contenido, nombre) => {
