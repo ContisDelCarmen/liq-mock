@@ -3,6 +3,7 @@ import { useTheme } from 'vuetify'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
+
 // access the `store` variable anywhere in the component ✨
 const store = useUserStore()
 
@@ -21,11 +22,14 @@ function handleLogout() {
 
 import { ref } from 'vue'
 
+const drawer = ref(false)
+
 const items = [
+  { text: 'Home',disabled: false, href: '/' },
   { text: 'Panel', disabled: false, href: '/panel' },
   { text: 'Reportes', disabled: false, href: '/repo' },
   { text: 'Boletas',disabled: false, href: '/boletas' },
-  { text: 'About',disabled: false, href: '/about' }
+  
 ]
 
 </script>
@@ -35,22 +39,24 @@ const items = [
     <v-layout>
       <!-- <v-system-bar color="deep-purple darken-3"></v-system-bar> -->
       <v-app-bar color="primary" prominent>
-        <v-toolbar-title>Sistema de liquidación</v-toolbar-title>
-        <v-spacer></v-spacer>
-       <div>         
-            <nav v-if="store.isAuth">
-              <RouterLink class="text-body-1" to="/">Home</RouterLink>
-              <RouterLink class="text-body-1" to="/panel">Panel</RouterLink>
-              <RouterLink class="text-body-1" to="/repo">Reportes</RouterLink>
-              <RouterLink class="text-body-1" to="/boletas">Boletas</RouterLink>
-            </nav>         
-        </div> 
-        <v-spacer></v-spacer>
+        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-toolbar-title>Sistema de liquidación Trancas</v-toolbar-title>
+        
         <span>{{ store.getUser }}</span>
         <v-btn icon="mdi-logout" @click="handleLogout"></v-btn>
 
         <v-btn @click="toggleTheme">Cambiar tema</v-btn>
       </v-app-bar>
+
+      <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary
+      density="compact" style="width: 120px; ">
+
+        <v-list >
+        <v-list-item v-for="item in items" :title="item.text" :to="item.href"  ></v-list-item>
+        </v-list>
+
+      </v-navigation-drawer>
+
       
       <v-main class="d-flex align-center justify-center" style="min-height: 300px">
         <Suspense>
