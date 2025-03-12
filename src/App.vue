@@ -48,11 +48,11 @@ const items = [
         <v-btn @click="toggleTheme">Cambiar tema</v-btn>
       </v-app-bar>
 
-      <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary
+      <v-navigation-drawer v-if = "store.isAuth" v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary
       density="compact" style="width: 120px; ">
 
-        <v-list >
-        <v-list-item v-for="item in items" :title="item.text" :to="item.href"  ></v-list-item>
+        <v-list>
+        <v-list-item v-for="item in items" :title="item.text" :to="item.href"></v-list-item>
         </v-list>
 
       </v-navigation-drawer>
