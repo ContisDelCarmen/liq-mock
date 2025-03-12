@@ -38,6 +38,16 @@ const getTxtFromAPI = async (url) => {
   return urlSalida
 }
 
+const getResumenIPSST = async (url) => {
+  const response = await fetch(url)
+  if (!response.ok) {
+    return null
+  }
+  const datos = await response.json()
+  console.log(datos)
+  return datos
+}
+
 async function downloadIpsst() {
 
   const url = `${apiBase.value}/api/txt/archivoIPSST?${store.filterString}`
@@ -74,6 +84,12 @@ function useLiqBoletas(getId) {
 
 const { data, error, isPending } = useLiqBoletas(() => store.filterString)
 
+function useResumenIPSST(getId) {
+  return useFetch(() => `${apiBase.value}/api/view/resumenIPSST?${getId()}`)
+}
+
+const { dataRes, errorRes, isPendingRes } = useResumenIPSST(() => store.filterString)
+
 const headers = [
   {
     title: 'CADENA',
@@ -88,6 +104,7 @@ const headers = [
    <RepoHeader title="Archivo IPSST" :subtitle="store.liqString">
       <v-btn color="primary" :disabled="!data" @click="printData" >Descargar</v-btn>
     </RepoHeader>
+
     <v-row>
       <div v-if="isPending">loading...</div>
       <v-data-table
@@ -100,7 +117,22 @@ const headers = [
       >
       </v-data-table>      
       <div v-else-if="error">No se puede obtener los datos solicitados.</div>
+    </v-row>
+
+ <!-- 
+    <v-row>
+      <div v-if="isPendingRes">loading...</div>
+      <v-data-table
+        v-else-if="dataRes"
+        class="text-caption"
+        hover
+        density="compact"
+        :items="dataRes"
+      >
+      </v-data-table>      
+      <div v-else-if="errorRes">No se puede obtener los datos solicitados.</div>
 
     </v-row>
+     -->
   </v-container> 
 </template>

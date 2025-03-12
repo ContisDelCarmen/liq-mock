@@ -50,8 +50,6 @@ import { ref } from 'vue'
 </script>
 
 <template>
-
-
   <v-layout class="rounded rounded-md d-flex flex-column mb-6 ">
     <v-app-bar color="primary" prominent>
       <v-app-bar-nav-icon v-if="store.auth" variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
