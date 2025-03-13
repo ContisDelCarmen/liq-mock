@@ -29,9 +29,8 @@ const items = [
   { text: 'Panel', disabled: false, href: '/panel' },
   { text: 'Reportes', disabled: false, href: '/repo' },
   { text: 'Boletas',disabled: false, href: '/boletas' },
-  
+ 
 ]
-
 </script>
 
 <template>
@@ -53,6 +52,7 @@ const items = [
 
         <v-list>
         <v-list-item v-for="item in items" :title="item.text" :to="item.href"></v-list-item>
+        <v-list-item title="Salir" @click="handleLogout()" />
         </v-list>
 
       </v-navigation-drawer>
