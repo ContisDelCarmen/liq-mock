@@ -1,5 +1,5 @@
 <script setup>
-import { useFetch } from '@/composables/useSimplieFetch';
+/*import { useFetch } from '@/composables/useSimplieFetch';
 import { useEndPoints } from '@/composables/useEndPoints';
 import { useStore } from '@/composables/useStore';
 
@@ -15,7 +15,7 @@ function setData() {
 }
 
 setData()
-
+*/
 </script>
 
 <template>
