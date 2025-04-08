@@ -82,13 +82,13 @@ function useLiqBoletas(getId) {
   return useFetch(() => `${apiBase.value}/api/view/archivoIPSST?${getId()}`)
 }
 
-const { data, error, isPending } = useLiqBoletas(() => store.filterString)
+const { data, error, isPending } = useLiqBoletas(() => store.filterPeriodoString)
 
 function useResumenIPSST(getId) {
   return useFetch(() => `${apiBase.value}/api/view/resumenIPSST?${getId()}`)
 }
 
-const { dataRes, errorRes, isPendingRes } = useResumenIPSST(() => store.filterString)
+const { dataRes, errorRes, isPendingRes } = useResumenIPSST(() => store.filterPeriodoString )
 
 const headers = [
   {

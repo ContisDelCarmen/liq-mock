@@ -5,6 +5,16 @@ import { useFilterStore } from '@/stores/filterStore.js'
 const store = useFilterStore();
 
 const emit = defineEmits(['submit'])
+const props = defineProps({
+    tipoliq: {
+        type: Boolean,
+        default: true
+    },
+    nroadi: {
+        type: Boolean,
+        default: true
+    }
+})
 
 const liq = [{
     name: 'Mensual',
@@ -64,12 +74,12 @@ const handleClick = () => {
 <template>
     <v-container>
         <v-row class="pa-0 ma-0">
-            <v-col align-self="center">
+            <v-col v-if="props.tipoliq" align-self="center" >
                 <v-select label="Liquidación" :items="liq" item-title="name" item-value="value" v-model="liqSelected"
                     return-object>
                 </v-select>
             </v-col>
-            <v-col>
+            <v-col v-if="props.nroadi">
                 <v-text-field label="Nro. Adicional" v-model="nroAdi" required></v-text-field>
             </v-col>
             <v-col>
