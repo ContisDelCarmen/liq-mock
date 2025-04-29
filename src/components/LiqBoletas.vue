@@ -63,6 +63,7 @@ async function handleDownloadPdf(idliq) {
   //console.log(liqStore.getBoletaTXT)
   console.log(idliq)
   await liqStoreBoleta.setId(idliq)
+  //await liqStoreBoleta.createBoleta()
   await liqStoreBoleta.createPdf()
 }
 
@@ -103,7 +104,7 @@ async function handleDownloadPdf(idliq) {
 
           <template v-slot:item.LIQUIDACIONID="{ value }">
             <a :href="apiBase + '/api/boleta?IdLiq=' + value" target="_blank" >descargar</a>
-            <!-- <v-btn @click="handleDownloadPdf(value)">Descargar</v-btn> -->
+             <!-- <v-btn @click="handleDownloadPdf(value)">Descargar</v-btn>  -->
           </template>
         </v-data-table>
       </v-card>
