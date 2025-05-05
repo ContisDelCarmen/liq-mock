@@ -19,7 +19,7 @@ function printData() {
 
   console.log(largeString )
   //downloadTxt(largeString,data.value[0].NOMBREARCHIVO)
-  downloadIpsst()
+  downloadAcred()
 }
 
 const getTxtFromAPI = async (url) => {
@@ -38,19 +38,11 @@ const getTxtFromAPI = async (url) => {
   return urlSalida
 }
 
-const getResumenIPSST = async (url) => {
-  const response = await fetch(url)
-  if (!response.ok) {
-    return null
-  }
-  const datos = await response.json()
-  console.log(datos)
-  return datos
-}
 
-async function downloadIpsst() {
 
-  const url = `${apiBase.value}/api/txt/archivoIPSST?${store.filterString}`
+async function downloadAcred() {
+
+  const url = `${apiBase.value}/api/txt/archivoAcred?${store.filterString}`
 
   const urlDescarga = await getTxtFromAPI(url)
 
@@ -78,17 +70,14 @@ const downloadTxt = (contenido, nombre) => {
     URL.revokeObjectURL(url);
 }
 
-function useLiqBoletas(getId) {
-  return useFetch(() => `${apiBase.value}/api/view/archivoIPSST?${getId()}`)
+
+
+
+function useResumenAcred(getId) {
+  return useFetch(() => `${apiBase.value}/api/view/archivoAcred?${getId()}`)
 }
 
-const { data, error, isPending } = useLiqBoletas(() => store.filterPeriodoString)
-
-function useResumenIPSST(getId) {
-  return useFetch(() => `${apiBase.value}/api/view/resumenIPSST?${getId()}`)
-}
-
-const { dataRes, errorRes, isPendingRes } = useResumenIPSST(() => store.filterPeriodoString )
+const { data, error, isPending } = useResumenAcred(() => store.filterString )
 
 const headers = [
   {
@@ -101,7 +90,7 @@ const headers = [
 
 <template>
  <v-container>
-   <RepoHeader title="Archivo Acreditaciones" :subtitle="store.liqString">
+   <RepoHeader title="Archivo Acreditaciones">
       <v-btn color="primary" :disabled="!data" @click="printData" >Descargar</v-btn>
     </RepoHeader>
 

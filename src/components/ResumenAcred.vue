@@ -11,13 +11,13 @@ const { apiBase } = useEndPoints()
 
 const store = useFilterStore()
 
-function useResumenIPSST(getId) {
-  return useFetch(() => `${apiBase.value}/api/view/resumenIPSST?${getId()}`)
+function useResumenAcred(getId) {
+  return useFetch(() => `${apiBase.value}/api/view/resumenAcred?${getId()}`)
 }
 
 //const { data, error, isPending } = useResumenIPSST(() => store.filterString)
 
-const { data, error, isPending } = useResumenIPSST(() => store.filterPeriodoString )
+const { data, error, isPending } = useResumenAcred(() => store.filterString )
 
 
 const getVto = (vto) => {
@@ -29,30 +29,36 @@ const getVto = (vto) => {
 }
 
 const headers = [
+{
+    title: 'Periodo',
+    align: 'start',
+    key: 'PERIODO'
+  },
   {
     title: 'Fecha dev',
     align: 'start',
     key: 'FECHADEV'
   },
   {
-    title: 'Codigo',
-    align: 'end',
-    key: 'CODIGO'
-  },
-  {
-    title: 'Sub Cod',
-    align: 'end',
-    key: 'SUBCOD'
-  },
-  {
-    title: 'Desc Boleta',
-    align: 'start',
-    key: 'DESCBOLETA'
-  },
-  {
     title: 'Importe',
     align: 'end',
     key: 'IMPORTE'
+  },
+  {
+    title: 'Cantidad',
+    align: 'end',
+    key: 'CANTIDAD'
+  },
+  {
+    title: 'Bloqueo',
+    align: 'start',
+    key: 'BLOQ'
+  },
+  {
+    title: 'Es Ley',
+    align: 'start',
+    key: 'ESLEY'
+    
   }
 ]
 
@@ -61,20 +67,23 @@ const headers = [
 function exportFile() {
   const map1 = data.value.map((x) => {
     return [
+      getVto(x.PERIODO),
       getVto(x.FECHADEV),
-      x.CODIGO,
-      x.SUBCOD,
-      x.DESCBOLETA,
-      x.IMPORTE
+      x.IMPORTE,
+      x.CANTIDAD,
+      x.BLOQ,
+      x.ESLEY,
+      
     ]
   })
 
   const titulosTabla = [
+    'Periodo',
     'Fecha dev',
-    'Codigo',
-    'Sub Codigo',
-    'Desc Boleta',
-    'Importe'
+    'Importe',
+    'Cantidad',
+    'Bloqueo',
+    'Es Ley'
   ]
   const filtros = store.liqString
   const tituloReporte = 'Resumen Acreditaciones'
@@ -82,6 +91,7 @@ function exportFile() {
   const ws = utils.aoa_to_sheet(map1)
 
   ws['!cols'] = [
+    { wch: 15 },
     { wch: 15 },
     { wch: 10 },
     { wch: 10 },
@@ -118,11 +128,12 @@ function exportFile() {
       >
       <template v-slot:item="{ item }">
           <tr class="pa-0 ma-0">
-            <td class="text-right">{{ getVto(item.FECHADEV) }}</td>
-            <td class="text-right">{{ item.CODIGO }}</td>
-            <td class="text-right">{{ item.SUBCOD }}</td>
-            <td class="text-left">{{ item.DESCBOLETA }}</td>
+            <td class="text-right">{{ getVto(item.PERIODO) }}</td>
+            <td class="text-left">{{ getVto(item.FECHADEV) }}</td>
             <td class="text-right">{{ financial(item.IMPORTE) }}</td>
+            <td class="text-right">{{ item.CANTIDAD }}</td>
+            <td class="text-left">{{ item.BLOQ }}</td>
+            <td class="text-left">{{ item.ESLEY }}</td>
           </tr>
         </template>
       </v-data-table>      

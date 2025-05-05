@@ -1,7 +1,13 @@
 <script setup>
 import LiqInputPanel from '@/components/LiqInputPanel.vue'
+//    <ResumenAcred></ResumenAcred>  <v-row><ResumenAcredDetalle></ResumenAcredDetalle> </v-row>
+
+//import ResumenAcred from '@/components/ResumenAcred.vue'
+
+//import ResumenAcredDetalle from '@/components/ResumenAcredDetalle.vue'
+
 import ArchAcred from '@/components/ArchAcred.vue'
-import ResumenAcred from '@/components/ResumenAcred.vue'
+
 </script>
 
 <template>
@@ -10,13 +16,8 @@ import ResumenAcred from '@/components/ResumenAcred.vue'
       <h3>Archivos</h3>
     </v-row>
     <v-row>
-      <LiqInputPanel :tipoliq=false :nroadi=false ></LiqInputPanel>
+      <LiqInputPanel></LiqInputPanel>
     </v-row>
-    <v-row>
-      <ResumenAcred></ResumenAcred>
-    </v-row>
-    <v-row>
-      <ArchAcred></ArchAcred>
-    </v-row>
+    <v-row>    <ArchAcred></ArchAcred>  </v-row>
   </v-container>
 </template>
