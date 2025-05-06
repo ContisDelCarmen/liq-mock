@@ -46,7 +46,7 @@ const headers = [
     key: 'FECHADEV'
   },
   {
-    title: 'LiquidacionId',
+    title: 'Liquidacion Id',
     align: 'start',
     key: 'LIQUIDACIONID'
   },
@@ -140,10 +140,22 @@ function exportFile() {
   })
 
   const titulosTabla = [
+    'Adicional',
     'Periodo',
     'Fecha dev',
-    'Importe',
-    'Cantidad',
+    'LiquidacionId',
+    'Documento',
+    'Apellido',
+    'Nombre',
+    'Reparticion',
+    'Orden',
+    'Afiliado',
+    'CUIL',
+    'CBU',
+    'Haberes',
+    'Retenciones',
+    'Neto',
+    'Uni Org',    
     'Bloqueo',
     'Es Ley'
   ]
@@ -157,8 +169,20 @@ function exportFile() {
     { wch: 15 },
     { wch: 10 },
     { wch: 10 },
+    { wch: 10 },
+    { wch: 10 },
     { wch: 25 },
-    { wch: 15 }
+    { wch: 25 },
+    { wch: 10 },
+    { wch: 10 },
+    { wch: 15 },
+    { wch: 15 },
+    { wch: 15 },
+    { wch: 15 },
+    { wch: 15 },
+    { wch: 10 },
+    { wch: 10 },
+    { wch: 10 }
   ]
   /* create workbook and append worksheet */
   const wb = utils.book_new()
@@ -174,7 +198,7 @@ function exportFile() {
 <template>
  <v-container>
    <RepoHeader title="Detalle Acreditaciones" :subtitle="store.liqString">
-      
+    <v-btn color="primary" :disabled="!data" @click="printData" >Descargar</v-btn>
     </RepoHeader>
 
     <v-row>

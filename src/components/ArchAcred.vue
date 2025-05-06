@@ -5,6 +5,10 @@ import { useFilterStore } from '@/stores/filterStore'
 import { useEndPoints } from '@/composables/useEndPoints'
 import { useFetch } from '@/composables/useFetch'
 
+
+const preview = ref(false)
+
+
 const { apiBase } = useEndPoints()
 
 const store = useFilterStore()
@@ -13,11 +17,11 @@ function printData() {
   let largeString = ""
   for (let index = 0; index < data.value.length; index++) {
     const element = data.value[index];
-    
-    largeString+= element.CADENA + '\n'
+
+    largeString += element.CADENA + '\n'
   }
 
-  console.log(largeString )
+  console.log(largeString)
   //downloadTxt(largeString,data.value[0].NOMBREARCHIVO)
   downloadAcred()
 }
@@ -47,7 +51,7 @@ async function downloadAcred() {
   const urlDescarga = await getTxtFromAPI(url)
 
   if (urlDescarga == null) {
-   
+
     return
   }
 
@@ -60,7 +64,7 @@ async function downloadAcred() {
   window.URL.revokeObjectURL(urlDescarga) // Limpia la URL creada
 }
 
-const downloadTxt = (contenido, nombre) => {
+/*const downloadTxt = (contenido, nombre) => {
     const a = document.createElement("a");
     const archivo = new Blob([contenido], { type: 'text/plain' });
     const url = URL.createObjectURL(archivo);
@@ -68,7 +72,7 @@ const downloadTxt = (contenido, nombre) => {
     a.download = nombre;
     a.click();
     URL.revokeObjectURL(url);
-}
+}*/
 
 
 
@@ -77,7 +81,7 @@ function useResumenAcred(getId) {
   return useFetch(() => `${apiBase.value}/api/view/archivoAcred?${getId()}`)
 }
 
-const { data, error, isPending } = useResumenAcred(() => store.filterString )
+const { data, error, isPending } = useResumenAcred(() => store.filterString)
 
 const headers = [
   {
@@ -89,26 +93,20 @@ const headers = [
 </script>
 
 <template>
- <v-container>
-   <RepoHeader title="Archivo Acreditaciones">
-      <v-btn color="primary" :disabled="!data" @click="printData" >Descargar</v-btn>
+  <v-container>
+    <RepoHeader title="Archivo Acreditaciones">
+      <v-btn color="primary" :disabled="!data" @click="preview = !preview">Previsualizar</v-btn>
+      <v-btn color="primary" :disabled="!data" @click="printData">Descargar</v-btn>
     </RepoHeader>
 
-    <v-row>
+    <v-row v-if="preview">
       <div v-if="isPending">loading...</div>
-      <v-data-table
-        v-else-if="data"
-        class="text-caption"
-        hover
-        density="compact"
-        :items="data"
-        :headers="headers"
-      >
-      </v-data-table>      
+      <v-data-table v-else-if="data" class="text-caption" hover density="compact" :items="data" :headers="headers">
+      </v-data-table>
       <div v-else-if="error">No se puede obtener los datos solicitados.</div>
     </v-row>
 
- <!-- 
+    <!-- 
     <v-row>
       <div v-if="isPendingRes">loading...</div>
       <v-data-table
@@ -123,5 +121,5 @@ const headers = [
 
     </v-row>
      -->
-  </v-container> 
+  </v-container>
 </template>
