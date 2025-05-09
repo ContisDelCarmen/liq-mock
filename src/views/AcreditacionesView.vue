@@ -13,7 +13,8 @@ import ArchAcred from '@/components/ArchAcred.vue'
       <h3>Archivos</h3>
     </v-row>
     <v-row>
-      <LiqInputPanel></LiqInputPanel>
+      <LiqInputPanel :esley="true">
+      </LiqInputPanel>
     </v-row>
     <v-row>
       <ResumenAcred></ResumenAcred>

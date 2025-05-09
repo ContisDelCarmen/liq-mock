@@ -1,6 +1,6 @@
 <script setup>
 import RepoHeader from './RepoHeader.vue'
-import { useFilterStore } from '@/stores/filterStore'
+import { useFilterStore} from '@/stores/filterStore'
 import { useEndPoints } from '@/composables/useEndPoints'
 import { useFetch } from '@/composables/useFetch'
 import { financial,agregaTitulosExcel} from '@/utils/reportes.js'
@@ -17,7 +17,7 @@ function useResumenAcred(getId) {
 
 //const { data, error, isPending } = useResumenIPSST(() => store.filterString)
 
-const { data, error, isPending } = useResumenAcred(() => store.filterString )
+const { data, error, isPending } = useResumenAcred(() => store.filterStringLey )
 
 
 const getVto = (vto) => {
@@ -228,7 +228,7 @@ function exportFile() {
             <td class="text-left">{{ item.CBU}}</td>
             <td class="text-right">{{ financial(item.HABERES) }}</td>            
             <td class="text-right">{{ item.RETENCIONES }}</td>
-            <td class="text-right">{{ item.NETO }}</td>
+            <td class="text-right">{{ financial(item.NETO) }}</td>
             <td class="text-right">{{ item.UNIORG}}</td>
             <td class="text-right">{{ item.BLOQ }}</td>
             <td class="text-left">{{ item.ESLEY }}</td>            

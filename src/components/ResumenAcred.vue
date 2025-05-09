@@ -17,7 +17,7 @@ function useResumenAcred(getId) {
 
 //const { data, error, isPending } = useResumenIPSST(() => store.filterString)
 
-const { data, error, isPending } = useResumenAcred(() => store.filterString )
+const { data, error, isPending } = useResumenAcred(() => store.filterStringLey )
 
 
 const getVto = (vto) => {
@@ -131,7 +131,7 @@ function exportFile() {
             <td class="text-right">{{ getVto(item.PERIODO) }}</td>
             <td class="text-left">{{ getVto(item.FECHADEV) }}</td>
             <td class="text-right">{{ financial(item.IMPORTE) }}</td>
-            <td class="text-right">{{ item.CANTIDAD }}</td>
+            <td class="text-right">{{financial( item.CANTIDAD) }}</td>
             <td class="text-left">{{ item.BLOQ }}</td>
             <td class="text-left">{{ item.ESLEY }}</td>
           </tr>
