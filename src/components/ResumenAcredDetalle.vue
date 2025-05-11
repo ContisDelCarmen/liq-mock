@@ -5,11 +5,14 @@ import { useEndPoints } from '@/composables/useEndPoints'
 import { useFetch } from '@/composables/useFetch'
 import { financial,agregaTitulosExcel} from '@/utils/reportes.js'
 import { utils, writeFileXLSX } from 'xlsx'
+import { ref } from 'vue'
 //<v-btn color="primary" :disabled="!data" @click="exportFile" >Descargar</v-btn>
 
 const { apiBase } = useEndPoints()
 
 const store = useFilterStore()
+
+const preview = ref(false)
 
 function useResumenAcred(getId) {
   return useFetch(() => `${apiBase.value}/api/view/detalleAcred?${getId()}`)
@@ -198,10 +201,11 @@ function exportFile() {
 <template>
  <v-container>
    <RepoHeader title="Detalle Acreditaciones" :subtitle="store.liqString">
+    <v-btn color="primary" :disabled="!data" @click="preview = !preview">Previsualizar</v-btn>
     <v-btn color="primary" :disabled="!data" @click="printData" >Descargar</v-btn>
     </RepoHeader>
 
-    <v-row>
+    <v-row v-if="preview">
       <div v-if="isPending">loading...</div>
       <v-data-table
         v-else-if="data"

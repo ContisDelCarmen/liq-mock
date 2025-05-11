@@ -111,7 +111,7 @@ function exportFile() {
 
 <template>
  <v-container>
-   <RepoHeader title="Acreditaciones" :subtitle="store.liqString">
+   <RepoHeader title="Resumen Acreditaciones" :subtitle="store.liqString">
       <v-btn color="primary" :disabled="!data" @click="exportFile" >Descargar</v-btn>
     </RepoHeader>
 

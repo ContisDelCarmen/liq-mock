@@ -101,8 +101,8 @@ const handleClick = () => {
             <v-col>
                 <v-text-field label="Año" v-model="year" required type="number"></v-text-field>
             </v-col>
-            <v-col v-if="props.esley">
-                <v-checkbox v-model="esLey">EsLey</v-checkbox>
+            <v-col  v-if="props.esley" >
+                <v-checkbox v-model="esLey" label="Es Ley"></v-checkbox>
             </v-col>
             <v-col>
                 <slot></slot>

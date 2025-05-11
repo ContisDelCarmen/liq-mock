@@ -10,7 +10,7 @@ import ArchAcred from '@/components/ArchAcred.vue'
 <template>
   <v-container>
     <v-row justify="space-around" class="bg-primary">
-      <h3>Archivos</h3>
+      <h3>Acreditaciones</h3>
     </v-row>
     <v-row>
       <LiqInputPanel :esley="true">
