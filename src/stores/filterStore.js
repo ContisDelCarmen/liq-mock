@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { useFetch } from '@/composables/useFetch';
 
 function useConf() {
-  return useFetch(() => `http://200.55.244.26:3005/api/view/periodo?Activo=1`)
+  return useFetch(() => `http://181.15.107.62:3005/api/view/periodo?Activo=1`)
 }
 
 const { data } = useConf()
