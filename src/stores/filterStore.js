@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia'
-import { useFetch } from '@/composables/useFetch';
+import { useFetch } from '@/composables/useFetch'
+import { useEndPoints } from '@/composables/useEndPoints'
 
-function useConf() {
-  return useFetch(() => `http://181.15.107.62:3005/api/view/periodo?Activo=1`)
+const {apiBase} = useEndPoints()
+
+
+function useConf() {  
+  return useFetch(() => `${apiBase.value}/api/view/periodo?Activo=1`)
 }
 
 const { data } = useConf()
@@ -22,8 +26,7 @@ const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', '
 
 export const useFilterStore = defineStore('filter', {
   state: () => ({
-    tipoliq: 1, nroadi: 0, year: 0, month: 0,
-    //URL_API: 'http://200.55.244.26:3005/api'
+    tipoliq: 1, nroadi: 0, year: 0, month: 0,    
     URL_API: 'https://midliq-api--dev-trancas.deno.dev/api'
   }),
   getters: {
@@ -35,7 +38,8 @@ export const useFilterStore = defineStore('filter', {
   },
   actions: {
     setPer() {
-      fetch(`https://midliq-api--dev-trancas.deno.dev/api/view/periodo?Activo=1`)
+
+      fetch(`${apiBase.value}/api/view/periodo?Activo=1`)
         .then((res) => res.json())
         .then((_data) => {
           this.year = _data[0].PERIODO.split('-')[0]

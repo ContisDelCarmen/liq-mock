@@ -2,9 +2,13 @@
 import { useTheme } from 'vuetify'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useEndPoints } from './composables/useEndPoints'
 
+const {setEndPoint} = useEndPoints()
 
-// access the `store` variable anywhere in the component ✨
+setEndPoint("prodTrancas")
+
+// access the `store` variable anywhere in the component 
 const store = useUserStore()
 
 const theme = useTheme()
