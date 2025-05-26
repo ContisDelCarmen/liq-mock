@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue'
 import RepoHeader from './RepoHeader.vue'
 import { useFilterStore } from '@/stores/filterStore'
 import { useEndPoints } from '@/composables/useEndPoints'
 import { useFetch } from '@/composables/useFetch'
 
-const { apiBase } = useEndPoints()
+const { apiBase, env} = useEndPoints()
+
+console.log(apiBase.value, env.value)
 
 const store = useFilterStore()
 
@@ -97,6 +98,9 @@ const headers = [
     key: 'CADENA'
   }
 ]
+
+
+
 </script>
 
 <template>

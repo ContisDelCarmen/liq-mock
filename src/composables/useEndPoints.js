@@ -12,6 +12,7 @@ export function useEndPoints() {
     apiBoletas.value = ep.boletas
     apiSp.value = ep.sp
     env.value = ep.titulo
+    console.log(apiBase.value)
   }
   return {
     apiBase,
