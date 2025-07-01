@@ -1,10 +1,13 @@
 <script setup>
-import { ref } from 'vue';
+import { ref} from 'vue';
 import { useFilterStore } from '@/stores/filterStore.js'
+
 
 const store = useFilterStore();
 
 const emit = defineEmits(['submit'])
+
+
 
 const liq = [{
     name: 'Mensual',
@@ -59,7 +62,7 @@ const handleClick = () => {
                     return-object>
                 </v-select>
             </v-col>
-            <v-col>
+            <v-col v-if="props.nroadi">
                 <v-text-field label="Nro. Adicional" v-model="nroAdi" required></v-text-field>
             </v-col>
             <v-col>
