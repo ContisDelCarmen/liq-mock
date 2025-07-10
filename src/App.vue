@@ -7,6 +7,7 @@ import { useEndPoints } from './composables/useEndPoints.js'
 const { setDesa,setProd, env } = useEndPoints()
 
 setDesa()
+//setProd()
 
 // access the `store` variable anywhere in the component 
 const store = useUserStore()
