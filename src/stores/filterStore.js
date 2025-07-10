@@ -27,7 +27,8 @@ const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', '
 export const useFilterStore = defineStore('filter', {
   state: () => ({
     tipoliq: 1, nroadi: 0, year: 0, month: 0,    
-    URL_API: 'https://midliq-api--dev-trancas.deno.dev/api'
+    URL_API:`${apiBase.value}/api`, // 'https://midliq-api--dev-trancas.deno.dev/api'
+    //URL_API: 'https://midliq-api--dev-trancas.deno.dev/api'
   }),
   getters: {
     filterString: (state) => `TipoLiquidacionId=${state.tipoliq}&GrupoAdicionalId=${state.nroadi}&Periodo=01/${state.month}/${state.year}`,

@@ -2,16 +2,14 @@
 import { useTheme } from 'vuetify'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { useEndPoints } from './composables/useEndPoints'
-import endPoints from './endPoints.json'
+import { useEndPoints } from './composables/useEndPoints.js'
 
-const {setEndPoint} = useEndPoints()
+const { setDesa,setProd, env } = useEndPoints()
 
-setEndPoint(endPoints.prodTrancas)
+setDesa()
 
 // access the `store` variable anywhere in the component 
 const store = useUserStore()
-
 const theme = useTheme()
 const router = useRouter()
 
@@ -31,10 +29,11 @@ const drawer = ref(false)
 
 const items = [
   { text: 'Home',disabled: false, href: '/' },
-  { text: 'Panel', disabled: false, href: '/panel' },
-  { text: 'Reportes', disabled: false, href: '/repo' },
+  { text: 'Panel',disabled: false, href: '/panel' },
+  { text: 'Reportes',disabled: false, href: '/repo' },
   { text: 'Boletas',disabled: false, href: '/boletas' },
-  { text: 'Archivos ',disabled: false, href: '/archivos' }, 
+  { text: 'IPSST',disabled: false, href: '/archivos' },
+ 
 ]
 </script>
 

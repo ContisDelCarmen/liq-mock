@@ -7,6 +7,16 @@ const store = useFilterStore();
 
 const emit = defineEmits(['submit'])
 
+const props = defineProps({
+    tipoliq: {
+        type: Boolean,
+        default: true
+    },
+    nroadi: {
+        type: Boolean,
+        default: true
+    }
+})
 
 
 const liq = [{
