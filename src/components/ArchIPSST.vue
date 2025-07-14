@@ -78,18 +78,18 @@ const downloadTxt = (contenido, nombre) => {
     a.click();
     URL.revokeObjectURL(url);
 }
-
 function useLiqBoletas(getId) {
   return useFetch(() => `${apiBase.value}/api/view/archivoIPSST?${getId()}`)
 }
 
-const { data, error, isPending } = useLiqBoletas(() => store.filterPeriodoString)
+const { data, error, isPending } = useLiqBoletas(() => store.filterString)
 
 function useResumenIPSST(getId) {
   return useFetch(() => `${apiBase.value}/api/view/resumenIPSST?${getId()}`)
 }
 
-const { dataRes, errorRes, isPendingRes } = useResumenIPSST(() => store.filterPeriodoString )
+const { dataRes, errorRes, isPendingRes } = useResumenIPSST(() => store.filterString)
+
 
 const headers = [
   {
