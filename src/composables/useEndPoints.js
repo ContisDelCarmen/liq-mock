@@ -7,16 +7,21 @@ const endpoints = {
     sp: 'https://josrferreyr-deno-api-su-79--desarrollo.deno.dev',
   },
   prod: {
-    boletas: "http://181.93.233.87:3005",
-    base: "http://181.93.233.87:3005", 
-    sp: "http://181.93.233.87:3005"
+    boletas:'https://midliq-api--dev-trancas.deno.dev/api',// "http://181.93.233.87:3005",
+    base: 'https://midliq-api--dev-trancas.deno.dev/api' ,//"http://181.93.233.87:3005", 
+    sp: 'https://midliq-api--dev-trancas.deno.dev/api',//"http://181.93.233.87:3005"
   }
 }
+//const apiBase = ref(endpoints.prod.base)
+//const apiSp = ref(endpoints.prod.sp)
+
+//const env = ref('prod')
+
 
 const apiBoletas = ref(endpoints.prod.boletas)
 const apiBase = ref(endpoints.prod.base)
 const apiSp = ref(endpoints.prod.sp)
-const env = ref('Prod')
+const env = ref('prod')
 
 export function useEndPoints() {
 

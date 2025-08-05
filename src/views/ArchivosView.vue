@@ -11,10 +11,7 @@ import ResumenIPSST from '@/components/ResumenIPSST.vue'
     </v-row>
     <v-row>
       <LiqInputPanel></LiqInputPanel>
-    </v-row>   
-    <v-row>
-      <ResumenIPSST></ResumenIPSST>
-    </v-row>
+    </v-row>      
     <v-row>
       <ArchIPSST></ArchIPSST>
     </v-row>
